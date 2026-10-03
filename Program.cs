@@ -1,7 +1,23 @@
+using Microsoft.EntityFrameworkCore;
+using Portifolio.Models.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// Use ConnectionString 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+// Check null ConnectionString
+if (string.IsNullOrEmpty(connectionString))
+{
+    throw new InvalidOperationException("A string de conexão 'DefaultConnection' não foi encontrada.");
+}
+
+// Use SQLServer 
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(connectionString));
 
 var app = builder.Build();
 
