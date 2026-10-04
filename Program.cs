@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Portifolio.Models.Data;
+using Portifolio.Services.Implements;
+using Portifolio.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +20,8 @@ if (string.IsNullOrEmpty(connectionString))
 // Use SQLServer 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
+
+builder.Services.AddScoped<IAuthService, LoginService>();
 
 var app = builder.Build();
 
