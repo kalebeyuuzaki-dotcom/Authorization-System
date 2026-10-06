@@ -24,26 +24,15 @@ namespace Portifolio.Services.Implements
         public async Task<bool> AuthAsync(LoginViewModel model)
         {
             var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Email.ToLower() == model.Email.ToLower());
+                .FirstOrDefaultAsync(u => EF.Functions.Like(u.Email, model.Email));
 
             if (user == null)
             {
                 return false;
             }
 
-            bool isPasswordValid = await VerifyPasswordAsync(model.Password, user.Password);
-
-            if (isPasswordValid == false)
-            {
-                return false;
-            }
-
-            return true;
+            return BCrypt.Net.BCrypt.Verify(model.Password, user.Password);
         }
 
-        public async Task<bool> VerifyPasswordAsync(string password, string hashedPassword)
-        {
-            return await Task.Run(() => BCrypt.Net.BCrypt.Verify(password.Trim(), hashedPassword.Trim()));
-        }
     }
 }
