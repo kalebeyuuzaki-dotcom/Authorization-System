@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Portifolio.Models.ViewModels;
-using Portifolio.Services.Implements;
 using Portifolio.Services.Interfaces;
 
 namespace Portifolio.Controllers
@@ -8,6 +7,7 @@ namespace Portifolio.Controllers
     public class LoginController : Controller
     {
         private readonly IAuthService _authService;
+
         public LoginController(IAuthService authService)
         {
             _authService = authService;
@@ -18,15 +18,15 @@ namespace Portifolio.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View("~/Views/Home/Index.cshtml", model);
+                return View(nameof(Index), model);
             }
 
-            bool isAuhtenticate = await _authService.AuthAsync(model);
+            bool isAuthenticated = await _authService.AuthAsync(model);
 
-            if (isAuhtenticate == false)
+            if (!isAuthenticated)
             {
                 ViewData["MessageFail"] = "Usuário e/ou senha incorretos.";
-
+                
                 return View("~/Views/Home/Index.cshtml", model);
             }
 
