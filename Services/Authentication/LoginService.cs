@@ -1,9 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Portifolio.Models.Data;
 using Portifolio.Models.ViewModels;
-using Portifolio.Services.Interfaces;
-
-namespace Portifolio.Services.Implements
+namespace Portifolio.Services.Authentication
 {
     public class LoginService : IAuthenticationService
     {

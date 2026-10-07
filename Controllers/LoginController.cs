@@ -1,7 +1,7 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Portifolio.Models.ViewModels;
-using Portifolio.Services.Interfaces;
+using Portifolio.Services.Authentication;
 
 namespace Portifolio.Controllers
 {

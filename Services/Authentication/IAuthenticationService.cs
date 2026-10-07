@@ -1,6 +1,6 @@
 using Portifolio.Models.ViewModels;
 
-namespace Portifolio.Services.Interfaces
+namespace Portifolio.Services.Authentication
 {
     /// <summary>
     /// Interface responsável por validar credenciais do usuário no fluxo de login.

@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Portifolio.Models.Data;
-using Portifolio.Services.Implements;
-using Portifolio.Services.Interfaces;
+using Portifolio.Services.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
