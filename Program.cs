@@ -21,7 +21,7 @@ if (string.IsNullOrEmpty(connectionString))
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-builder.Services.AddScoped<IAuthService, LoginService>();
+builder.Services.AddScoped<IAuthenticationService, LoginService>();
 
 var app = builder.Build();
 

@@ -1,16 +1,16 @@
 ﻿@model Portifolio.Models.ViewModels.LoginViewModel
 
 @{
-    ViewData["Title"] = "Login";
+    TempData["Title"] = "Login";
 }
 
 <div class="text-start m-auto" style="max-width: 600px;">
     <h2 class="display-6 text-center mb-4">Entrar no sistema</h2>
      
-    @if (ViewData["MessageFail"] != null) /* Código C# aqui*/
+    @if (TempData["ErrorMessage"] != null)
     {
-        <div class="alert alert-danger text-center mb-3" role="alert"> <!-- Cria divisória para colocar a ViewData -->
-            @ViewData["MessageFail"]
+        <div class="alert alert-danger text-center mb-3" role="alert">
+            @TempData["ErrorMessage"]
         </div>
     }
 

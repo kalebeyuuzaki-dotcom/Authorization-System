@@ -1,38 +1,57 @@
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Portifolio.Models.ViewModels;
 using Portifolio.Services.Interfaces;
 
 namespace Portifolio.Controllers
 {
+    /// <summary>
+    /// Controla o fluxo de login do usuário.
+    /// </summary>
     public class LoginController : Controller
     {
-        private readonly IAuthService _authService;
+        private readonly IAuthenticationService _authService;
 
-        public LoginController(IAuthService authService)
+        public LoginController(IAuthenticationService authService)
         {
             _authService = authService;
         }
 
+        /// <summary>
+        /// Valida as credenciais de login com os registrados no banco de dados.
+        /// </summary>
+        /// <param name="model">Parâmetros a serem validados.</param>
+        /// <returns>Redireciona usuário para 'Panel' se as credenciais de login forem válidas.</returns>
         [HttpPost]
         public async Task<IActionResult> Authenticate([FromForm] LoginViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                return View(nameof(Index), model);
+                model.Password = string.Empty;
+                TempData["LoginModel"] = JsonSerializer.Serialize(model);
+                TempData["ErrorMessage"] = "Usuário e/ou senha incorretos";
+
+                return RedirectToAction("Index", "Home");
             }
 
-            bool isAuthenticated = await _authService.AuthAsync(model);
+            bool isAuthenticated = await _authService.AuthenticateAsync(model);
 
             if (!isAuthenticated)
             {
-                ViewData["MessageFail"] = "Usuário e/ou senha incorretos.";
-                
-                return View("~/Views/Home/Index.cshtml", model);
+                model.Password = string.Empty;
+                TempData["LoginModel"] = JsonSerializer.Serialize(model);
+                TempData["ErrorMessage"] = "Usuário e/ou senha incorretos.";
+
+                return RedirectToAction("Index", "Home");
             }
 
             return RedirectToAction(nameof(Panel));
         }
 
+        /// <summary>
+        /// Rota GET que redireciona o usuário após sucesso no login. 
+        /// </summary>
+        /// <returns>Renderiza a página 'Panel'.</returns>
         [HttpGet]
         public IActionResult Panel()
         {

@@ -1,13 +1,21 @@
 using System.Diagnostics;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Portifolio.Models;
+using Portifolio.Models.ViewModels;
 
 namespace Portifolio.Controllers;
 
 public class HomeController : Controller
 {
+    [HttpGet]
     public IActionResult Index()
     {
+        if (TempData["LoginModel"] is string modelJson)
+        {
+            var model = JsonSerializer.Deserialize<LoginViewModel>(modelJson);
+            return View(model);
+        }
         return View();
     }
 
