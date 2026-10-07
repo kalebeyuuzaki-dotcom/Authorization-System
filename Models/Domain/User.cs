@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace LoginSystemMvc.Models.Domain
+namespace Portifolio.Models.Domain
 {
     public class User
     {
