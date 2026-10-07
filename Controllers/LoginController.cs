@@ -57,5 +57,14 @@ namespace Portifolio.Controllers
         {
             return View();
         }
+
+        /// <summary>
+        /// Carrega a página para Criar Nova Conta.
+        /// </summary>
+        [HttpGet]
+        public IActionResult Register()
+        {
+            return View();
+        }
     }
 }
