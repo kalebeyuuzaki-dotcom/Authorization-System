@@ -1,0 +1,67 @@
+@model Portifolio.Models.ViewModels.RegisterViewModel
+
+@{
+    TempData["Title"] = "Criar Conta";
+}
+
+<div class="text-start m-auto" style="max-width: 600px;">
+    <h2 class="display-6 text-center mb-4">Criar nova conta</h2>
+     
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger text-center mb-3" role="alert">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <form asp-controller="Login" asp-action="Register" method="post">
+
+        <!-- Campo Nome Completo -->
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label">Nome Completo</label>
+            <input asp-for="Name" class="form-control" placeholder="Seu nome e sobrenome" />
+            <span asp-validation-for="Name" class="text-danger small d-block mt-1"></span>
+        </div>
+
+        <!-- Campo E-mail -->
+        <div class="mb-3">
+            <label asp-for="Email" class="form-label">Email</label>
+            <input asp-for="Email" type="password" class="form-control" placeholder="seu@email.com" />
+            <span asp-validation-for="Email" class="text-danger small d-block mt-1"></span>
+        </div>
+
+        <!-- Campo Senha -->
+        <div class="mb-3">
+            <label asp-for="Password" class="form-label">Senha</label>
+            <input asp-for="Password" class="form-control" placeholder="Sua senha" />
+            <span asp-validation-for="Password" class="text-danger small d-block mt-1"></span>
+        </div>
+
+        <!-- Campo Confirmar Senha -->
+        <div class="mb-3">
+            <label asp-for="ConfirmPassword" class="form-label">Confirmar Senha</label>
+            <input asp-for="ConfirmPassword" type="password" class="form-control"
+                   placeholder="Digite a senha novamente" />
+            <span asp-validation-for="ConfirmPassword" class="text-danger small d-block mt-1"></span>
+        </div>
+
+        <!-- Botão Cadastrar -->
+        <div class="d-grid gap-2 mb-3">
+            <button type="submit" class="btn btn-primary">Cadastrar</button>
+        </div>
+
+    </form>
+
+    <hr />
+
+    <p class="text-center text-secondary mb-2">Já possui uma conta?</p>
+
+    <div class="d-grid gap-2">
+        <a href="/Home/Index" class="btn btn-outline-secondary">Voltar para o Login</a>
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
