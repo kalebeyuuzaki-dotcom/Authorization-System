@@ -8,11 +8,12 @@ namespace Portifolio.Services.Register
         /// Interface responsável por gerenciar o pré-registro de novas contas.
         /// 
         /// Gera código de confirmação de 6 dígitos caso E-mail informado ainda
-        /// não exista no banco de dados de usuários cadastrados.
+        /// não exista no banco de dados e envia .
         ///
-        /// Salva as informações de pré-registro no banco de dados para confirmação do código gerado.
+        /// Salva as informações de pré-registro no banco de dados para confirmação 
+        /// do código gerado e, em seguida, envia o email para o usuário via SMTP.
         /// </summary>
-        /// <param name="model">Dados da model a serem tratados.</param>
+        /// <param name="model">Dados informados pelo usuário.</param>
         /// <returns>Retorna true caso as informações informadas pelo usuário sejam válidas.</returns>
         public Task<bool> PreRegisterAsync(RegisterViewModel model);
     }
