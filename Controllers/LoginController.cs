@@ -25,22 +25,11 @@ namespace Portifolio.Controllers
         [HttpPost]
         public async Task<IActionResult> Authenticate([FromForm] LoginViewModel model)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || !await _authService.AuthenticateAsync(model))
             {
                 model.Password = string.Empty;
                 TempData["LoginModel"] = JsonSerializer.Serialize(model);
                 TempData["ErrorMessage"] = "Usuário e/ou senha incorretos";
-
-                return RedirectToAction("Index", "Home");
-            }
-
-            bool isAuthenticated = await _authService.AuthenticateAsync(model);
-
-            if (!isAuthenticated)
-            {
-                model.Password = string.Empty;
-                TempData["LoginModel"] = JsonSerializer.Serialize(model);
-                TempData["ErrorMessage"] = "Usuário e/ou senha incorretos.";
 
                 return RedirectToAction("Index", "Home");
             }
