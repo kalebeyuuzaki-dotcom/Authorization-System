@@ -1,4 +1,5 @@
 using Portifolio.Models.ViewModels;
+using Portifolio.Models.Result;
 
 namespace Portifolio.Services.Register
 {
@@ -15,6 +16,6 @@ namespace Portifolio.Services.Register
         /// </summary>
         /// <param name="model">Dados informados pelo usuário.</param>
         /// <returns>Retorna true caso as informações informadas pelo usuário sejam válidas.</returns>
-        public Task<bool> PreRegisterAsync(RegisterViewModel model);
+        Task<PreRegisterResult> PreRegisterAsync(RegisterViewModel model);
     }
 }
