@@ -16,7 +16,7 @@ namespace Portifolio.Services.Email
             _smtpSettings = smtpSettings.Value;
         }
 
-        public async Task SendEmailAsync(string to, string subject, string body)
+        public async Task<bool> SendEmailAsync(string to, string subject, string body)
         {
             var message = new MimeMessage();
 
@@ -55,6 +55,12 @@ namespace Portifolio.Services.Email
 
                 // 3. Realiza o envio
                 await client.SendAsync(message);
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
             }
             finally
             {

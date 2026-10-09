@@ -8,6 +8,6 @@ namespace Portifolio.Services.Email
         /// <param name="to">E-mail do destinatário</param>
         /// <param name="subject">Assunto do e-mail</param>
         /// <param name="body">Conteúdo do e-mail (aceita tags HTML)</param>
-        Task SendEmailAsync(string to, string subject, string body);
+        Task<bool> SendEmailAsync(string to, string subject, string body);
     }
 }
