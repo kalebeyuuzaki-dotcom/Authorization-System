@@ -9,7 +9,7 @@ namespace Portifolio.Services.Register
         /// Interface responsável por gerenciar o pré-registro de novas contas.
         /// 
         /// Gera código de confirmação de 6 dígitos caso E-mail informado ainda
-        /// não exista no banco de dados e envia .
+        /// não exista no banco de dados.
         ///
         /// Salva as informações de pré-registro no banco de dados para confirmação 
         /// do código gerado e, em seguida, envia o email para o usuário via SMTP.
