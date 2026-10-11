@@ -1,6 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using Portifolio.Models.Data;
 using Portifolio.Services.Authentication;
+using DotNetEnv;
+using Portifolio.Configurations;
+using Portifolio.Services.Email;
+using Portifolio.Services.Register;
+
+Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +27,22 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 builder.Services.AddScoped<IAuthenticationService, LoginService>();
+builder.Services.AddTransient<IEmailService, EmailService>();
+builder.Services.AddTransient<IRegisterService, RegisterService>();
+
+builder.Services.Configure<SmtpSettings>(options =>
+{
+    options.Host = Environment.GetEnvironmentVariable("SMTP_HOST") ?? "";
+    
+    // Converte a porta para int de forma segura, usando 587 como padrão caso falhe
+    options.Port = int.TryParse(Environment.GetEnvironmentVariable("SMTP_PORT"), out var port) ? port : 587;
+    
+    options.Username = Environment.GetEnvironmentVariable("SMTP_USERNAME") ?? "";
+    options.Password = Environment.GetEnvironmentVariable("SMTP_PASSWORD") ?? "";
+    options.Encryption = Environment.GetEnvironmentVariable("SMTP_ENCRYPTION") ?? "";
+    options.FromAddress = Environment.GetEnvironmentVariable("SMTP_FROM_ADDRESS") ?? "";
+    options.FromName = Environment.GetEnvironmentVariable("SMTP_FROM_NAME") ?? "";
+});
 
 var app = builder.Build();
 
@@ -35,6 +57,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();

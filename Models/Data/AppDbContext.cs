@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using LoginSystemMvc.Models.Domain;
+using Portifolio.Models.Domain;
 
 namespace Portifolio.Models.Data
 {
@@ -10,6 +10,7 @@ namespace Portifolio.Models.Data
         }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<PreRegisterRequest> PreRegisterRequests { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

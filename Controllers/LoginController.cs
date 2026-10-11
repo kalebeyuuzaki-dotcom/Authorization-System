@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Portifolio.Models.ViewModels;
 using Portifolio.Services.Authentication;
@@ -8,6 +9,7 @@ namespace Portifolio.Controllers
     /// <summary>
     /// Controla o fluxo de login do usuário.
     /// </summary>
+    [Authorize]
     public class LoginController : Controller
     {
         private readonly IAuthenticationService _authService;
@@ -20,23 +22,13 @@ namespace Portifolio.Controllers
         /// <summary>
         /// Valida as credenciais de login com os registrados no banco de dados.
         /// </summary>
-        /// <param name="model">Parâmetros a serem validados.</param>
+        /// <param name="model">Credenciais de login a serem validadas.</param>
         /// <returns>Redireciona usuário para 'Panel' se as credenciais de login forem válidas.</returns>
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Authenticate([FromForm] LoginViewModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                model.Password = string.Empty;
-                TempData["LoginModel"] = JsonSerializer.Serialize(model);
-                TempData["ErrorMessage"] = "Usuário e/ou senha incorretos";
-
-                return RedirectToAction("Index", "Home");
-            }
-
-            bool isAuthenticated = await _authService.AuthenticateAsync(model);
-
-            if (!isAuthenticated)
+            if (!ModelState.IsValid || !await _authService.AuthenticateAsync(model))
             {
                 model.Password = string.Empty;
                 TempData["LoginModel"] = JsonSerializer.Serialize(model);
@@ -54,6 +46,17 @@ namespace Portifolio.Controllers
         /// <returns>Renderiza a página 'Panel'.</returns>
         [HttpGet]
         public IActionResult Panel()
+        {
+            return View();
+        }
+
+        /// <summary>
+        /// Rota GEt que redireciona o usuário para página de criar nova conta.
+        /// </summary>
+        /// <returns>Renderiza página de cadastro.</returns>
+        [AllowAnonymous]
+        [HttpGet]
+        public IActionResult Register()
         {
             return View();
         }
