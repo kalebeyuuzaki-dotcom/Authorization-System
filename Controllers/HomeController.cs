@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Portifolio.Models.ViewModels;
 
@@ -8,6 +9,7 @@ namespace Portifolio.Controllers;
 /// <summary>
 /// Páginas iniciais do site.
 /// </summary>
+[AllowAnonymous]
 public class HomeController : Controller
 {
     /// <summary>
