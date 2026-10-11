@@ -15,7 +15,8 @@ namespace Portifolio.Services.Register
         /// do código gerado e, em seguida, envia o email para o usuário via SMTP.
         /// </summary>
         /// <param name="model">Dados informados pelo usuário.</param>
-        /// <returns>Retorna true caso as informações informadas pelo usuário sejam válidas.</returns>
+        /// <returns>Retorna um Result Pattern true, ou false com mensagem de erro 
+        /// se as informações forem inválidas ou ocorrer um erro de conexão no serviço de email.</returns>
         Task<PreRegisterResult> PreRegisterAsync(RegisterViewModel model);
     }
 }
