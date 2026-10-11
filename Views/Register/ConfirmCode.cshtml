@@ -1,0 +1,53 @@
+@using System.Text.Json
+@model Portifolio.Models.ViewModels.RegisterViewModel
+
+@{
+    TempData["Title"] = "Verificar Código";
+    
+    string emailString = TempData["RegisterModel"]?.ToString() ?? "";
+    TempData.Keep("RegisterModel");
+}
+
+<div class="text-start m-auto" style="max-width: 600px;">
+    <h2 class="display-6 text-center mb-4">Confirmar Conta</h2>
+     
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger text-center mb-3" role="alert">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <p class="text-center text-secondary mb-4">
+        Digitou as informações? Agora insira o código de confirmação de 6 dígitos enviado para o seu e-mail.
+    </p>
+
+    <form asp-controller="Register" asp-action="VerifyCode" method="post">
+
+        <!-- Campo Código de Confirmação -->
+        <div class="mb-3">
+            <label class="form-label">Insira o Código de Verificação enviado para o email @emailString </label>
+            <input name="code" class="form-control text-center fs-4" placeholder="000000" maxlength="6" pattern="\d{6}"
+                   inputmode="numeric" />
+        </div>
+
+        <!-- Botão Verificar Código -->
+        <div class="d-grid gap-2 mb-3">
+            <button type="submit" class="btn btn-primary">Verificar Código</button>
+        </div>
+
+    </form>
+
+    <hr />
+
+    <p class="text-center text-secondary mb-2">Não recebeu o código?</p>
+
+    <div class="d-grid gap-2">
+        <a href="/Login/Register" class="btn btn-outline-secondary">Voltar para o Cadastro</a>
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
