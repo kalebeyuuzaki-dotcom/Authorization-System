@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Portifolio.Models.Data;
 using Portifolio.Models.ViewModels;
+
 namespace Portifolio.Services.Authentication
 {
-    public class LoginService : IAuthenticationService
+    public class LoginService : ILoginService
     {
         private readonly AppDbContext _context;
 
@@ -12,17 +13,22 @@ namespace Portifolio.Services.Authentication
             _context = context;
         }
 
-        public async Task<bool> AuthenticateAsync(LoginViewModel model)
+        public async Task<UserSessionViewModel?> AuthenticateAsync(LoginViewModel model)
         {
             var user = await _context.Users
-                .FirstOrDefaultAsync(u => EF.Functions.Like(u.Email, model.Email));
+                .FirstOrDefaultAsync(u => u.Email == model.Email);
 
-            if (user == null)
+            if (user == null || !BCrypt.Net.BCrypt.Verify(model.Password, user.Password))
             {
-                return false;
+                return null;
             }
 
-            return BCrypt.Net.BCrypt.Verify(model.Password, user.Password);
+            return new UserSessionViewModel
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Email = user.Email
+            };
         }
     }
 }
