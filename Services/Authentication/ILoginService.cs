@@ -1,4 +1,3 @@
-using Portifolio.Models.Domain;
 using Portifolio.Models.ViewModels;
 
 namespace Portifolio.Services.Authentication
