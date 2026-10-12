@@ -5,10 +5,18 @@ using DotNetEnv;
 using Portifolio.Configurations;
 using Portifolio.Services.Email;
 using Portifolio.Services.Register;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Home/Index";
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+    });
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -26,7 +34,7 @@ if (string.IsNullOrEmpty(connectionString))
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-builder.Services.AddScoped<IAuthenticationService, LoginService>();
+builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddTransient<IEmailService, EmailService>();
 builder.Services.AddTransient<IRegisterService, RegisterService>();
 
