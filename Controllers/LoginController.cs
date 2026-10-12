@@ -36,7 +36,7 @@ namespace Portifolio.Controllers
         }
 
         /// <summary>
-        /// Rota post para autenticação do usuário no login.
+        /// Rota POST para autenticação do usuário no login.
         /// </summary>
         /// <param name="model">Credenciais informadas pelo usuário (email e senha).</param>
         [AllowAnonymous]
@@ -52,13 +52,13 @@ namespace Portifolio.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            var user = await _authService.AuthenticateAsync(model);
+            UserSessionViewModel? user = await _authService.AuthenticateAsync(model);
 
             if (user == null)
             {
                 model.Password = string.Empty;
                 TempData["LoginModel"] = JsonSerializer.Serialize(model);
-                TempData["ErrorMessage"] = "Usuário e/ou senha incorretos.";
+                TempData["ErrorMessage"] = "E-mail e/ou senha incorretos.";
 
                 return RedirectToAction("Index", "Home");
             }
