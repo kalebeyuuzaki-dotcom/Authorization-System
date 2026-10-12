@@ -4,46 +4,53 @@
     TempData["Title"] = "Login";
 }
 
-<div class="text-start m-auto" style="max-width: 600px;">
-    <h2 class="display-6 text-center mb-4">Entrar no sistema</h2>
+<div class="m-auto text-start" style="max-width: 600px;">
+
+    <h2 class="display-6 mb-4 text-center">Entrar no sistema</h2>
      
     @if (TempData["ErrorMessage"] != null)
     {
-        <div class="alert alert-danger text-center mb-3" role="alert">
+        <div class="alert alert-danger mb-3 text-center" role="alert">
             @TempData["ErrorMessage"]
         </div>
     }
 
     <form asp-controller="Login" asp-action="Authenticate" method="post">
 
-        <!-- Campo E-mail -->
+        <!-- Campo: E-mail -->
         <div class="mb-3">
             <label asp-for="Email" class="form-label">Email</label>
             <input asp-for="Email" class="form-control" placeholder="seu@email.com" />
             <span asp-validation-for="Email" class="text-danger small d-block mt-1"></span>
         </div>
 
-        <!-- Campo Senha -->
+        <!-- Campo: Senha -->
         <div class="mb-3">
             <label asp-for="Password" class="form-label">Senha</label>
             <input asp-for="Password" class="form-control" placeholder="Sua senha" />
             <span asp-validation-for="Password" class="text-danger small d-block mt-1"></span>
         </div>
 
-        <!-- Botão Entrar -->
+        <!-- Ações do Formulário -->
         <div class="d-grid gap-2 mb-3">
-            <button type="submit" class="btn btn-primary">Entrar</button>
+            <button class="btn btn-primary" type="submit">Entrar</button>
         </div>
 
     </form>
 
-    <p class="text-center"><a href="/Login/Recover" class="text-decoration-none">Esqueci minha senha</a></p>
-    <hr />
-
-    <p class="text-center text-secondary mb-2">Não tem uma conta?</p>
-
-    <div class="d-grid gap-2">
-        <a href="/Login/Register" class="btn btn-outline-secondary">Criar nova conta</a>
+    <!-- Links de Suporte -->
+    <div class="text-center">
+        <p class="mb-3">
+            <a asp-controller="Login" asp-action="Recover" class="text-decoration-none">Esqueci minha senha</a>
+        </p>
+        
+        <hr />
+        
+        <p class="text-secondary mb-2">Não tem uma conta?</p>
+        
+        <div class="d-grid gap-2">
+            <a asp-controller="Login" asp-action="Register" class="btn btn-outline-secondary">Criar nova conta</a>
+        </div>
     </div>
 
 </div>
