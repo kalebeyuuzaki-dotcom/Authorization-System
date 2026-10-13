@@ -13,7 +13,7 @@ Acompanhamento do progresso de implementação dos requisitos de segurança do s
 - [ ] Verificação e ativação de novas contas através do código enviado por e-mail.
 - [ ] Implementação de Logs de auditoria para monitoramento de acessos e anomalias.
 - [ ] Controle de acesso por Autorização em rotas protegidas (*Authorize*).
-- [ ] Tratamento de exeções globais utilizando Middleware.
+- [ ] Tratamento de exceções globais utilizando Middleware.
 - [ ] Mecanismo de bloqueio contra ataques de força bruta (*Rate Limiting*).
 
 ## 🛡️ Conceitos de Segurança da Informação Aplicados
@@ -23,3 +23,5 @@ Acompanhamento do progresso de implementação dos requisitos de segurança do s
 * **Integridade e Consistência de Dados:** Implementação de transações no banco de dados. Se o envio do e-mail de validação falhar, o sistema desfaz a gravação do usuário automaticamente (*Rollback*), impedindo dados corrompidos ou cadastros "fantasmas".
 * **Proteção contra Enumeração de Usuários (User Enumeration):** Se um usuário tentar cadastrar um e-mail que já existe, o sistema adota a técnica do *Sucesso Falso* e avança sem dar pistas visuais. Isso impede que atacantes descubram quais e-mails possuem conta no sistema através de mensagens de erros específicos na tela.
 
+## 📐 Padrões de Design e Clean Code aplicados
+Inicialmente, o fluxo de registro foi desenvolvido em métodos **lineares** (inline) para validar a lógica de negócio de ponta a ponta. Posteriormente, apliquei conceitos de **Clean Code** e refatoração para extrair a lógica em métodos privados estáticos e helpers. Isso melhorou a legibilidade da orquestração principal, removeu 'Magic Numbers' usando constantes centralizadas e garantiu o Princípio da Responsabilidade Única dentro da classe de serviço.
