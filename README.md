@@ -10,7 +10,7 @@ Acompanhamento do progresso de implementação dos requisitos de segurança do s
 - [x] Gerenciamento confidencial de credenciais do servidor através de variáveis de ambiente (`.env`).
 - [x] Mecanismo de resiliência e integridade de dados usando transações atômicas com *Rollback* automático.
 - [x] Proteção ativa contra Engenharia Social e Enumeração de Usuários (*User Enumeration*).
-- [ ] Verificação e ativação de novas contas através do código enviado por e-mail.
+- [x] Verificação e ativação de novas contas através do código enviado por e-mail.
 - [ ] Implementação de Logs de auditoria para monitoramento de acessos e anomalias.
 - [ ] Controle de acesso por Autorização em rotas protegidas (*Authorize*).
 - [ ] Tratamento de exceções globais utilizando Middleware.
