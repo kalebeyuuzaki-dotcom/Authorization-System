@@ -14,6 +14,8 @@ namespace Portifolio.Controllers
     [Authorize]
     public class LoginController : Controller
     {
+        private const string ErrorMessageKey = "ErrorMessage";
+        private const string LoginModelKey = "LoginModel";
         private readonly ILoginService _authService;
 
         public LoginController(ILoginService authService)
@@ -22,7 +24,7 @@ namespace Portifolio.Controllers
         }
 
         /// <summary>
-        /// Rota GET padrão que renderiza o formulário de login.
+        /// Rota GET que renderiza usuário já logado para página '/Login/Panel'.
         /// </summary>
         [AllowAnonymous]
         [HttpGet]
@@ -32,7 +34,7 @@ namespace Portifolio.Controllers
             {
                 return RedirectToAction(nameof(Panel));
             }
-            return View();
+            return View("~/Views/Home/Index.cshtml");
         }
 
         /// <summary>
@@ -46,8 +48,9 @@ namespace Portifolio.Controllers
             if (!ModelState.IsValid)
             {
                 model.Password = string.Empty;
-                TempData["LoginModel"] = JsonSerializer.Serialize(model);
-                TempData["ErrorMessage"] = "Dados informados em formato inválido. Por favor, verifique as informações.";
+                TempData[LoginModelKey] = JsonSerializer.Serialize(model);
+
+                TempData[ErrorMessageKey] = "Dados informados em formato inválido. Por favor, verifique as informações.";
 
                 return RedirectToAction(nameof(Index));
             }
@@ -57,8 +60,9 @@ namespace Portifolio.Controllers
             if (user == null)
             {
                 model.Password = string.Empty;
-                TempData["LoginModel"] = JsonSerializer.Serialize(model);
-                TempData["ErrorMessage"] = "E-mail e/ou senha incorretos.";
+                TempData[LoginModelKey] = JsonSerializer.Serialize(model);
+                
+                TempData[ErrorMessageKey] = "E-mail e/ou senha incorretos.";
 
                 return RedirectToAction("Index", "Home");
             }
@@ -87,20 +91,14 @@ namespace Portifolio.Controllers
         /// </summary>
         [HttpGet]
         [Authorize]
-        public IActionResult Panel()
-        {
-            return View();
-        }
+        public IActionResult Panel() => View();
 
         /// <summary>
         /// Rota GET que carrega a página para criar nova conta.
         /// </summary>
         [AllowAnonymous]
         [HttpGet]
-        public IActionResult Register()
-        {
-            return View();
-        }
+        public IActionResult Register() => View();
 
         /// <summary>
         /// Realiza o encerramento da sessão atual do usuário limpando os cookies.
