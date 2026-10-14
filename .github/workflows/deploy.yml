@@ -1,0 +1,35 @@
+name: Deploy ASP.NET MVC para MonsterASP.NET
+
+on:
+  push:
+    branches:
+      - main # Dispara a automação toda vez que houver push na main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Faz o download do código do repositório para a máquina do GitHub
+    - name: Checkout do código
+      uses: actions/checkout@v4
+
+    # 2. Instala o SDK do .NET na máquina virtual
+    - name: Configurar o .NET SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '10.0.x' # Altere para '9.0' se o seu projeto usar o .NET 9
+
+    # 3. Compila e publica o projeto exatamente como você fazia no terminal local
+    - name: Publicar Aplicação (.NET Publish)
+      run: dotnet publish -c Release -o ./publish
+
+    # 4. Envia os arquivos gerados dentro da pasta ./publish via FTP para o servidor
+    - name: Enviar Arquivos via FTP
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: ./publish/ # Envia apenas o conteúdo da pasta publish
+        server-dir: /wwwroot/ # Dependendo do MonsterASP, pode ser '/' ou '/wwwroot/'. Geralmente '/' funciona se a conta FTP já apontar para a pasta certa do site.
