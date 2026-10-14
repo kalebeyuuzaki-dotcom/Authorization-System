@@ -4,12 +4,14 @@
     TempData["Title"] = "Criar Conta";
 }
 
-<div class="text-start m-auto" style="max-width: 600px;">
-    <h2 class="display-6 text-center mb-4">Criar nova conta</h2>
+<div class="m-auto text-start bg-white p-5 shadow rounded-3 border border-light-subtle" style="max-width: 500px; mt-5;">
+
+    <h2 class="fs-3 fw-bold text-dark mb-4">Criar nova conta</h2>
      
     @if (TempData["ErrorMessage"] != null)
     {
-        <div class="alert alert-danger text-center mb-3" role="alert">
+        <div class="border-0 border-start border-4 border-danger ps-3 mb-4 small text-start text-dark bg-transparent" role="alert">
+            <span class="fw-semibold text-danger d-block mb-1">Erro no cadastro</span>
             @TempData["ErrorMessage"]
         </div>
     }
@@ -17,48 +19,51 @@
     <form asp-controller="Register" asp-action="Register" method="post">
 
         <!-- Campo Nome Completo -->
-        <div class="mb-3">
-            <label asp-for="Name" class="form-label">Nome Completo</label>
-            <input asp-for="Name" class="form-control" placeholder="Seu nome e sobrenome" />
+        <div class="mb-4">
+            <label asp-for="Name" class="form-label text-secondary small fw-medium mb-1">Nome Completo</label>
+            <input asp-for="Name" class="form-control border-0 border-bottom border-secondary-subtle rounded-0 bg-transparent shadow-none px-0 py-2 text-dark" placeholder="Seu nome e sobrenome" />
             <span asp-validation-for="Name" class="text-danger small d-block mt-1"></span>
         </div>
 
         <!-- Campo E-mail -->
-        <div class="mb-3">
-            <label asp-for="Email" class="form-label">Email</label>
-            <input asp-for="Email" class="form-control" placeholder="seu@email.com" />
+        <div class="mb-4">
+            <label asp-for="Email" class="form-label text-secondary small fw-medium mb-1">Email</label>
+            <input asp-for="Email" class="form-control border-0 border-bottom border-secondary-subtle rounded-0 bg-transparent shadow-none px-0 py-2 text-dark" placeholder="seu@email.com" />
             <span asp-validation-for="Email" class="text-danger small d-block mt-1"></span>
         </div>
 
         <!-- Campo Senha -->
-        <div class="mb-3">
-            <label asp-for="Password" class="form-label">Senha</label>
-            <input asp-for="Password" class="form-control" placeholder="Sua senha" />
+        <div class="mb-4">
+            <label asp-for="Password" class="form-label text-secondary small fw-medium mb-1">Senha</label>
+            <input asp-for="Password" class="form-control border-0 border-bottom border-secondary-subtle rounded-0 bg-transparent shadow-none px-0 py-2 text-dark" placeholder="Sua senha" />
             <span asp-validation-for="Password" class="text-danger small d-block mt-1"></span>
         </div>
 
         <!-- Campo Confirmar Senha -->
-        <div class="mb-3">
-            <label asp-for="ConfirmPassword" class="form-label">Confirmar Senha</label>
-            <input asp-for="ConfirmPassword" class="form-control"
-                   placeholder="Digite a senha novamente" />
+        <div class="mb-4">
+            <label asp-for="ConfirmPassword" class="form-label text-secondary small fw-medium mb-1">Confirmar Senha</label>
+            <input asp-for="ConfirmPassword" class="form-control border-0 border-bottom border-secondary-subtle rounded-0 bg-transparent shadow-none px-0 py-2 text-dark" placeholder="Digite a senha novamente" />
             <span asp-validation-for="ConfirmPassword" class="text-danger small d-block mt-1"></span>
         </div>
 
-        <!-- Botão Cadastrar -->
-        <div class="d-grid gap-2 mb-3">
-            <button type="submit" class="btn btn-primary">Cadastrar</button>
+        <!-- Bloco de Suporte integrado logo abaixo dos inputs -->
+        <div class="mb-5 small">
+            <p class="mb-0 text-muted">
+                Já possui uma conta? <a href="/Home/Index" class="text-decoration-none text-primary fw-medium">Voltar para o Login</a>
+            </p>
+        </div>
+
+        <!-- Ações do Formulário alinhadas à direita -->
+        <div class="d-flex justify-content-end gap-2">
+            <a href="/Home/Index" class="btn btn-light border-0 text-secondary px-4 py-2 small" style="min-width: 100px;">
+                Cancelar
+            </a>
+            <button class="btn btn-primary px-4 py-2 small" type="submit" style="min-width: 100px;">
+                Cadastrar
+            </button>
         </div>
 
     </form>
-
-    <hr />
-
-    <p class="text-center text-secondary mb-2">Já possui uma conta?</p>
-
-    <div class="d-grid gap-2">
-        <a href="/Home/Index" class="btn btn-outline-secondary">Voltar para o Login</a>
-    </div>
 
 </div>
 

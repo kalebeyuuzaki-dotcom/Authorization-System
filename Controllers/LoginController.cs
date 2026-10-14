@@ -1,4 +1,6 @@
 using System.Text.Json;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Portifolio.Models.ViewModels;
@@ -7,58 +9,107 @@ using Portifolio.Services.Authentication;
 namespace Portifolio.Controllers
 {
     /// <summary>
-    /// Controla o fluxo de login do usuário.
+    /// Controla o fluxo de login e sessão do usuário.
     /// </summary>
     [Authorize]
     public class LoginController : Controller
     {
-        private readonly IAuthenticationService _authService;
+        private readonly ILoginService _authService;
 
-        public LoginController(IAuthenticationService authService)
+        public LoginController(ILoginService authService)
         {
             _authService = authService;
         }
 
         /// <summary>
-        /// Valida as credenciais de login com os registrados no banco de dados.
+        /// Rota GET padrão que renderiza o formulário de login.
         /// </summary>
-        /// <param name="model">Credenciais de login a serem validadas.</param>
-        /// <returns>Redireciona usuário para 'Panel' se as credenciais de login forem válidas.</returns>
+        [AllowAnonymous]
+        [HttpGet]
+        public IActionResult Index()
+        {
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                return RedirectToAction(nameof(Panel));
+            }
+            return View();
+        }
+
+        /// <summary>
+        /// Rota POST para autenticação do usuário no login.
+        /// </summary>
+        /// <param name="model">Credenciais informadas pelo usuário (email e senha).</param>
         [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Authenticate([FromForm] LoginViewModel model)
         {
-            if (!ModelState.IsValid || !await _authService.AuthenticateAsync(model))
+            if (!ModelState.IsValid)
             {
                 model.Password = string.Empty;
                 TempData["LoginModel"] = JsonSerializer.Serialize(model);
-                TempData["ErrorMessage"] = "Usuário e/ou senha incorretos.";
+                TempData["ErrorMessage"] = "Dados informados em formato inválido. Por favor, verifique as informações.";
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            UserSessionViewModel? user = await _authService.AuthenticateAsync(model);
+
+            if (user == null)
+            {
+                model.Password = string.Empty;
+                TempData["LoginModel"] = JsonSerializer.Serialize(model);
+                TempData["ErrorMessage"] = "E-mail e/ou senha incorretos.";
 
                 return RedirectToAction("Index", "Home");
             }
+
+            var claims = new List<System.Security.Claims.Claim>
+            {
+                new System.Security.Claims.Claim("Id", user.Id.ToString()),
+                new System.Security.Claims.Claim("Name", user.Name),
+                new System.Security.Claims.Claim("Email", user.Email)
+            };
+
+            var claimsIdentity = new System.Security.Claims.ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var principal = new System.Security.Claims.ClaimsPrincipal(claimsIdentity);
+
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, new AuthenticationProperties
+            {
+                IsPersistent = true,
+                ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(20)
+            });
 
             return RedirectToAction(nameof(Panel));
         }
 
         /// <summary>
-        /// Rota GET que redireciona o usuário após sucesso no login. 
+        /// Rota GET protegida que exibe o painel administrativo após o login bem-sucedido.
         /// </summary>
-        /// <returns>Renderiza a página 'Panel'.</returns>
         [HttpGet]
+        [Authorize]
         public IActionResult Panel()
         {
             return View();
         }
 
         /// <summary>
-        /// Rota GEt que redireciona o usuário para página de criar nova conta.
+        /// Rota GET que carrega a página para criar nova conta.
         /// </summary>
-        /// <returns>Renderiza página de cadastro.</returns>
         [AllowAnonymous]
         [HttpGet]
         public IActionResult Register()
         {
             return View();
+        }
+
+        /// <summary>
+        /// Realiza o encerramento da sessão atual do usuário limpando os cookies.
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction(nameof(Index));
         }
     }
 }
