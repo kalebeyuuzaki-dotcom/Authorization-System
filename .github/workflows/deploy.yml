@@ -32,4 +32,4 @@ jobs:
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./publish/ # Envia apenas o conteúdo da pasta publish
-        server-dir: ./
+        server-dir: ./wwwroot/
