@@ -32,4 +32,4 @@ jobs:
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./publish/ # Envia apenas o conteúdo da pasta publish
-        server-dir: /wwwroot/ # Dependendo do MonsterASP, pode ser '/' ou '/wwwroot/'. Geralmente '/' funciona se a conta FTP já apontar para a pasta certa do site.
+        server-dir: /wwwroot/
