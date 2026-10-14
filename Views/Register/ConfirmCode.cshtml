@@ -6,6 +6,8 @@
     
     string emailString = TempData["RegisterModel"]?.ToString() ?? "";
     TempData.Keep("RegisterModel");
+
+    string maskedEmail = EmailHelper.MaskEmail(emailString);
 }
 
 <div class="m-auto text-start bg-white p-5 shadow rounded-3 border border-light-subtle" style="max-width: 500px; mt-5;">
@@ -29,7 +31,8 @@
         <!-- Campo Código de Confirmação -->
         <div class="mb-4">
             <label class="form-label text-secondary small fw-medium mb-2">
-                Insira o Código de Verificação enviado para o email <span class="text-dark fw-semibold">@emailString</span>
+                @* 3. EXIBE A VARIÁVEL MASCARADA AQUI *@
+                Insira o Código de Verificação enviado para o email <span class="text-dark fw-semibold">@maskedEmail</span>
             </label>
             <input name="code" class="form-control text-center fs-4 border-0 border-bottom border-secondary-subtle rounded-0 bg-transparent shadow-none px-0 py-2 text-dark" 
                    placeholder="000000" maxlength="6" pattern="\d{6}" inputmode="numeric" required />
