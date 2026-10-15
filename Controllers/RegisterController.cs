@@ -10,10 +10,16 @@ namespace Portifolio.Controllers
     /// </summary>
     public class RegisterController : Controller
     {
+        private const string RegisterModelKey = "RegisterModel";
+        private const string ErrorMessageKey = "ErrorMessage";
+        private const string AllowAccessConfirmationKey = "AllowAccessConfirmation";
         private readonly IRegisterService _registerService;
-        public RegisterController(IRegisterService registerService)
+        private readonly IConfirmationCodeService _confirmationCodeService;
+
+        public RegisterController(IRegisterService registerService, IConfirmationCodeService confirmationCodeService)
         {
             _registerService = registerService;
+            _confirmationCodeService = confirmationCodeService;
         }
 
         /// <summary>
@@ -27,9 +33,8 @@ namespace Portifolio.Controllers
             if (!ModelState.IsValid)
             {
                 model.Password = string.Empty;
-                TempData["RegisterModel"] = JsonSerializer.Serialize(model);
-
-                TempData["ErrorMessage"] = "Os dados informados estão em um formato inválido.";
+                TempData[RegisterModelKey] = JsonSerializer.Serialize(model);
+                TempData[ErrorMessageKey] = "Os dados informados estão em um formato inválido. Por favor, verifique as informações.";
 
                 return RedirectToAction("Register", "Login");
             }
@@ -40,16 +45,14 @@ namespace Portifolio.Controllers
             {
                 model.Password = string.Empty;
                 model.ConfirmPassword = string.Empty;
-                TempData["RegisterModel"] = JsonSerializer.Serialize(model);
-
-                TempData["ErrorMessage"] = result.ErrorMessage;
+                TempData[RegisterModelKey] = JsonSerializer.Serialize(model);
+                TempData[ErrorMessageKey] = result.ErrorMessage;
 
                 return RedirectToAction("Register", "Login");
             }
 
-            TempData["RegisterModel"] = model.Email;
-
-            TempData["PermitirAcessoConfirmacao"] = true;
+            TempData[RegisterModelKey] = model.Email;
+            TempData[AllowAccessConfirmationKey] = true;
 
             return RedirectToAction(nameof(ConfirmCode));
         }
@@ -61,14 +64,15 @@ namespace Portifolio.Controllers
         [HttpGet]
         public IActionResult ConfirmCode()
         {
-            /* Verifica se o email foi redirecionado a partir da página anterior (/Register/Register),
-            impedindo acesso direto a URL de confirmação de código. */
-            if (TempData["RegisterModel"] == null || TempData["PermitirAcessoConfirmacao"] == null)
+            /* Verifica se quem está acessando esse endpoint foi redirecionado pela action Register, 
+            impedindo acesso direto a essa URL (/Register/ConfirmCode). */
+            if (TempData[RegisterModelKey] == null || TempData[AllowAccessConfirmationKey] == null)
             {
                 return RedirectToAction("Register", "Login");
             }
 
-            TempData.Keep("RegisterModel");
+            TempData.Keep(RegisterModelKey);
+
             return View();
         }
 
@@ -81,31 +85,31 @@ namespace Portifolio.Controllers
         [HttpPost]
         public async Task<IActionResult> VerifyCodeAsync(string code)
         {
-            string emailString = TempData["RegisterModel"]?.ToString() ?? string.Empty;
+            string emailString = TempData[RegisterModelKey]?.ToString() ?? string.Empty;
 
             if (string.IsNullOrWhiteSpace(emailString))
             {
-                TempData["ErrorMessage"] = "Sua sessão expirou. Por favor, reinicie o processo de cadastro.";
+                TempData[ErrorMessageKey] = "Sua sessão expirou. Por favor, reinicie o processo de cadastro.";
+
                 return RedirectToAction("Register", "Login");
             }
 
             if (string.IsNullOrWhiteSpace(code))
             {
-                TempData.Keep("RegisterModel");
-                TempData["PermitirAcessoConfirmacao"] = true;
-                TempData["ErrorMessage"] = "Por favor, digite o código de confirmação.";
-                
+                TempData.Keep(RegisterModelKey);
+                TempData[AllowAccessConfirmationKey] = true;
+                TempData[ErrorMessageKey] = "Por favor, digite o código de confirmação.";
+
                 return RedirectToAction(nameof(ConfirmCode));
             }
 
-            var result = await _registerService.VerifyCodeAsync(emailString, code);
+            var result = await _confirmationCodeService.VerifyCodeAsync(emailString, code);
 
             if (!result.IsSuccess)
             {
-                TempData.Keep("RegisterModel");
-                TempData["PermitirAcessoConfirmacao"] = true; 
-
-                TempData["ErrorMessage"] = result.ErrorMessage;
+                TempData.Keep(RegisterModelKey);
+                TempData[AllowAccessConfirmationKey] = true;
+                TempData[ErrorMessageKey] = result.ErrorMessage;
 
                 return RedirectToAction(nameof(ConfirmCode));
             }
