@@ -11,6 +11,7 @@ Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
+/* Cookies */
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -18,33 +19,30 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
     });
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
 
-// Use ConnectionString 
+/* Connection Db */
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// Check null ConnectionString
 if (string.IsNullOrEmpty(connectionString))
 {
     throw new InvalidOperationException("A string de conexão 'DefaultConnection' não foi encontrada.");
 }
 
-// Use SQLServer 
+/* DbContext */
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
 
+/* Services */
 builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddTransient<IEmailService, EmailService>();
-builder.Services.AddTransient<IRegisterService, RegisterService>();
+builder.Services.AddScoped<IRegisterService, RegisterService>();
+builder.Services.AddScoped<IConfirmationCodeService, ConfirmationCodeService>();
 
 builder.Services.Configure<SmtpSettings>(options =>
 {
     options.Host = Environment.GetEnvironmentVariable("SMTP_HOST") ?? "";
-
-    // Converte a porta para int de forma segura, usando 587 como padrão caso falhe
     options.Port = int.TryParse(Environment.GetEnvironmentVariable("SMTP_PORT"), out var port) ? port : 587;
-
     options.Username = Environment.GetEnvironmentVariable("SMTP_USERNAME") ?? "";
     options.Password = Environment.GetEnvironmentVariable("SMTP_PASSWORD") ?? "";
     options.Encryption = Environment.GetEnvironmentVariable("SMTP_ENCRYPTION") ?? "";
@@ -52,9 +50,12 @@ builder.Services.Configure<SmtpSettings>(options =>
     options.FromName = Environment.GetEnvironmentVariable("SMTP_FROM_NAME") ?? "";
 });
 
+// ---------------------------------------
+// App
+// ---------------------------------------
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -62,17 +63,19 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+/* Migrations auto */
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
+
     try
     {
         var context = services.GetRequiredService<AppDbContext>();
         context.Database.Migrate();
     }
-    catch (Exception ex)
+    catch
     {
-        
+        throw new InvalidOperationException("Não foi possível realizar as Migrations para o SQL Server.");
     }
 }
 
