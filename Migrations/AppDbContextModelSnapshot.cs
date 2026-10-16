@@ -62,6 +62,36 @@ namespace Portifolio.Migrations
                     b.ToTable("PreRegisterRequests");
                 });
 
+            modelBuilder.Entity("Portifolio.Models.Domain.RecoverPasswordRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsVerified")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("VerificationCode")
+                        .IsRequired()
+                        .HasMaxLength(6)
+                        .HasColumnType("nvarchar(6)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RecoverPasswordrRequests");
+                });
+
             modelBuilder.Entity("Portifolio.Models.Domain.User", b =>
                 {
                     b.Property<long>("Id")
