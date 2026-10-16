@@ -49,7 +49,6 @@ namespace Portifolio.Controllers
             {
                 model.Password = string.Empty;
                 TempData[LoginModelKey] = JsonSerializer.Serialize(model);
-
                 TempData[ErrorMessageKey] = "Dados informados em formato inválido. Por favor, verifique as informações.";
 
                 return RedirectToAction(nameof(Index));
@@ -61,7 +60,6 @@ namespace Portifolio.Controllers
             {
                 model.Password = string.Empty;
                 TempData[LoginModelKey] = JsonSerializer.Serialize(model);
-                
                 TempData[ErrorMessageKey] = "E-mail e/ou senha incorretos.";
 
                 return RedirectToAction("Index", "Home");
