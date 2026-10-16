@@ -5,14 +5,13 @@ using Portifolio.Models.Domain;
 using Portifolio.Models.Result;
 using Portifolio.Models.ViewModels;
 using Portifolio.Services.Email;
+using Portifolio.Utils;
 
 namespace Portifolio.Services.Register
 {
     public class RegisterService : IRegisterService
     {
         private const int CodeExpirationMinutes = 5;
-        private const int CodeMinValue = 100000;
-        private const int CodeMaxValueExclusive = 1000000;
         private readonly AppDbContext _context;
         private readonly IEmailService _emailService;
 
@@ -54,9 +53,9 @@ namespace Portifolio.Services.Register
             return PreRegisterResult.Success();
         }
 
-        // ---------------------------------------------------------------
+        // ===============================================================
         // Helpers: pré-cadastro
-        // ---------------------------------------------------------------
+        // ===============================================================
 
         private static PreRegisterRequest CreatePreRegisterRequest(RegisterViewModel model, string email)
         {
@@ -66,16 +65,11 @@ namespace Portifolio.Services.Register
                 Name = model.Name.ToUpper(),
                 Email = email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password),
-                VerificationCode = GenerateConfirmationCode(),
+                VerificationCode = GenerateCodeHelper.GenerateConfirmationCode(),
                 ExpiresAt = DateTime.UtcNow.AddMinutes(CodeExpirationMinutes),
                 AccessFailedCount = 0,
                 IsVerified = false
             };
-        }
-
-        private static string GenerateConfirmationCode()
-        {
-            return RandomNumberGenerator.GetInt32(CodeMinValue, CodeMaxValueExclusive).ToString();
         }
 
        private static string BuildConfirmationEmail(string name, string code)
