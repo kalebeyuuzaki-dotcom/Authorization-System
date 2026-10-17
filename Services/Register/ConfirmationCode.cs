@@ -9,6 +9,9 @@ namespace Portifolio.Services.Register
     {
         private const int MaxFailedAttempts = 3;
         private const string MaxAttemptsMessage = "Número máximo de tentativas excedido. Solicite um novo código.";
+        private const string InvalidCodeMessage = "Código inválido. Tente novamente.";
+        private const string ExpiredCodeMessage = "Este código de verificação expirou. Solicite um novo envio.";
+
         private readonly AppDbContext _context;
 
         public ConfirmationCodeService(AppDbContext appDbContext)
@@ -20,7 +23,7 @@ namespace Portifolio.Services.Register
         {
             var normalizedEmail = email.ToLower();
 
-            /* Se existir uma conta ativa (IsVerified = true), retorna mensagem de erro genérica ao usuário. */
+            // Se existir uma conta ativa no sistema, retorna mensagem de erro genérica ao usuário.
             var preRegister = await _context.PreRegisterRequests
                 .Where(p => p.Email == normalizedEmail && !p.IsVerified)
                 .OrderByDescending(p => p.ExpiresAt)
@@ -28,7 +31,7 @@ namespace Portifolio.Services.Register
 
             if (preRegister == null)
             {
-                return PreRegisterResult.Failure("Código inválido. Tente novamente.");
+                return PreRegisterResult.Failure(InvalidCodeMessage);
             }
 
             if (preRegister.AccessFailedCount >= MaxFailedAttempts)
@@ -38,7 +41,7 @@ namespace Portifolio.Services.Register
 
             if (preRegister.ExpiresAt < DateTime.UtcNow)
             {
-                return PreRegisterResult.Failure("Este código de verificação expirou. Solicite um novo envio.");
+                return PreRegisterResult.Failure(ExpiredCodeMessage);
             }
 
             if (preRegister.VerificationCode != code)
@@ -48,10 +51,6 @@ namespace Portifolio.Services.Register
 
             return await CreateUserAsync(preRegister);
         }
-
-        // ---------------------------------------------------------------
-        // Helpers: verificação do código
-        // ---------------------------------------------------------------
 
         private async Task<PreRegisterResult> RegisterFailedAttemptAsync(PreRegisterRequest preRegister)
         {
@@ -79,11 +78,8 @@ namespace Portifolio.Services.Register
                 };
 
                 await _context.Users.AddAsync(user);
-
                 preRegister.IsVerified = true;
-
                 await _context.SaveChangesAsync();
-
                 await transaction.CommitAsync();
 
                 return PreRegisterResult.Success();
