@@ -13,6 +13,10 @@ namespace Portifolio.Controllers
         private const string RegisterModelKey = "RegisterModel";
         private const string ErrorMessageKey = "ErrorMessage";
         private const string AllowAccessConfirmationKey = "AllowAccessConfirmation";
+        private const string InvalidDataMessage = "Os dados informados estão em um formato inválido. Por favor, verifique as informações.";
+        private const string SuccessMessage = "Sua conta foi criada e ativada com sucesso! Faça seu login.";
+        private const string SessionExpiredMessage = "Sua sessão expirou. Por favor, reinicie o processo de cadastro.";
+
         private readonly IRegisterService _registerService;
         private readonly IConfirmationCodeService _confirmationCodeService;
 
@@ -34,7 +38,7 @@ namespace Portifolio.Controllers
             {
                 model.Password = string.Empty;
                 TempData[RegisterModelKey] = JsonSerializer.Serialize(model);
-                TempData[ErrorMessageKey] = "Os dados informados estão em um formato inválido. Por favor, verifique as informações.";
+                TempData[ErrorMessageKey] = InvalidDataMessage;
 
                 return RedirectToAction("Register", "Login");
             }
@@ -64,15 +68,12 @@ namespace Portifolio.Controllers
         [HttpGet]
         public IActionResult ConfirmCode()
         {
-            /* Verifica se quem está acessando esse endpoint foi redirecionado pela action Register, 
-            impedindo acesso direto a essa URL (/Register/ConfirmCode). */
             if (TempData[RegisterModelKey] == null || TempData[AllowAccessConfirmationKey] == null)
             {
                 return RedirectToAction("Register", "Login");
             }
 
             TempData.Keep(RegisterModelKey);
-
             return View();
         }
 
@@ -89,8 +90,7 @@ namespace Portifolio.Controllers
 
             if (string.IsNullOrWhiteSpace(emailString))
             {
-                TempData[ErrorMessageKey] = "Sua sessão expirou. Por favor, reinicie o processo de cadastro.";
-
+                TempData[ErrorMessageKey] = SessionExpiredMessage;
                 return RedirectToAction("Register", "Login");
             }
 
@@ -114,8 +114,7 @@ namespace Portifolio.Controllers
                 return RedirectToAction(nameof(ConfirmCode));
             }
 
-            TempData["SuccessMessage"] = "Sua conta foi criada e ativada com sucesso! Faça seu login.";
-
+            TempData["SuccessMessage"] = SuccessMessage;
             return RedirectToAction("Index", "Home");
         }
     }
