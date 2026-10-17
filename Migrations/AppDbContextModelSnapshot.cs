@@ -79,9 +79,6 @@ namespace Portifolio.Migrations
                     b.Property<DateTime>("ExpiresAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsVerified")
-                        .HasColumnType("bit");
-
                     b.Property<string>("VerificationCode")
                         .IsRequired()
                         .HasMaxLength(6)

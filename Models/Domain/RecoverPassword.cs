@@ -23,7 +23,5 @@ namespace Portifolio.Models.Domain
         public DateTime ExpiresAt { get; set; }
 
         public int AccessFailedCount { get; set; } = 0;
-
-        public bool IsVerified { get; set; } = false;
     }
 }
