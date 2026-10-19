@@ -15,6 +15,6 @@ namespace Portifolio.Services.Register
         /// <param name="code">O código numérico de 6 dígitos enviado por e-mail.</param>
         /// <returns>Retorna um Result Pattern true indicando que a conta foi ativada com sucesso, 
         /// ou false acompanhado de uma mensagem descritiva detalhando o motivo da falha (ex: código incorreto, expirado ou bloqueado).</returns>
-        Task<PreRegisterResult> VerifyCodeAsync(string email, string code);
+        Task<PreRegisterResult> VerifyCodeAndCreateUserAccountAsync(string email, string code);
     }
 }

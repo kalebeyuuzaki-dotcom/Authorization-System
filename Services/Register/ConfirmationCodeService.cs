@@ -11,6 +11,7 @@ namespace Portifolio.Services.Register
         private const string MaxAttemptsMessage = "Número máximo de tentativas excedido. Solicite um novo código.";
         private const string InvalidCodeMessage = "Código inválido. Tente novamente.";
         private const string ExpiredCodeMessage = "Este código de verificação expirou. Solicite um novo envio.";
+        private const string FailOperationSQL = "Erro ao finalizar a criação da sua conta. Tente novamente.";
 
         private readonly AppDbContext _context;
 
@@ -19,7 +20,7 @@ namespace Portifolio.Services.Register
             _context = appDbContext;
         }
 
-        public async Task<PreRegisterResult> VerifyCodeAsync(string email, string code)
+        public async Task<PreRegisterResult> VerifyCodeAndCreateUserAccountAsync(string email, string code)
         {
             var normalizedEmail = email.ToLower();
 
@@ -87,7 +88,7 @@ namespace Portifolio.Services.Register
             catch
             {
                 await transaction.RollbackAsync();
-                return PreRegisterResult.Failure("Erro ao finalizar a criação da sua conta. Tente novamente.");
+                return PreRegisterResult.Failure(FailOperationSQL);
             }
         }
     }
