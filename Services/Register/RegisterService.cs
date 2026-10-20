@@ -25,7 +25,7 @@ namespace Portifolio.Services.Register
             _emailService = emailService;
         }
 
-        public async Task<PreRegisterResult> PreRegisterAsync(RegisterViewModel model)
+        public async Task<PreRegisterResult> GenerateCodeAndSentEmailAsync(RegisterViewModel model)
         {
             var normalizedEmail = model.Email.ToLower();
 

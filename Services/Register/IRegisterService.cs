@@ -17,6 +17,6 @@ namespace Portifolio.Services.Register
         /// <param name="model">Dados informados pelo usuário.</param>
         /// <returns>Retorna um Result Pattern true indicando que o pré-registro foi salvo no banco, 
         /// ou false com mensagem de erro genérica (ex: usuário e/ou senha inválidos, erro interno).</returns>
-        Task<PreRegisterResult> PreRegisterAsync(RegisterViewModel model);
+        Task<PreRegisterResult> GenerateCodeAndSentEmailAsync(RegisterViewModel model);
     }
 }
