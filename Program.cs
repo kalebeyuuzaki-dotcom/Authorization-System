@@ -7,7 +7,7 @@ using Portifolio.Services.Email;
 using Portifolio.Services.Register;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Portifolio.Services.PasswordRecovery;
-using Portifolio.Services.PasswordResetService;
+using Portifolio.Services.PasswordReset;
 
 Env.Load();
 
