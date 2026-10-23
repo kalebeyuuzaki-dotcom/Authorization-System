@@ -75,7 +75,7 @@ namespace Portifolio.Controllers
         {
             if (TempData[RegisterModelKey] == null || TempData[AllowAccessConfirmationKey] == null)
             {
-                return RedirectToAction("Register", "Login");
+                return RedirectToAction("Index", "Home");
             }
 
             TempData.Keep(RegisterModelKey);
