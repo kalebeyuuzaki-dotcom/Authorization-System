@@ -8,7 +8,7 @@ namespace Portifolio.Controllers
     /// <summary>
     /// Coordena o fluxo de cadastro de novas contas.
     /// </summary>
-    public class RegisterController : Controller
+    public class RegisterAccountController : Controller
     {
         private const string RegisterModelKey = "RegisterModel";
         private const string ErrorMessageKey = "ErrorMessage";
@@ -20,16 +20,25 @@ namespace Portifolio.Controllers
         private readonly IRegisterService _registerService;
         private readonly IConfirmationCodeService _confirmationCodeService;
 
-        public RegisterController(IRegisterService registerService, IConfirmationCodeService confirmationCodeService)
+        public RegisterAccountController(IRegisterService registerService, IConfirmationCodeService confirmationCodeService)
         {
             _registerService = registerService;
             _confirmationCodeService = confirmationCodeService;
+        }
+        
+        /// <summary>
+        /// Rota GET que carrega a página para criar nova conta.
+        /// </summary>
+        [HttpGet]
+        public IActionResult Register()
+        {
+            return View();
         }
 
         /// <summary>
         /// Rota POST que valida as informações de pré-registro de novas contas.
         /// </summary>
-        /// <param name="model">Informações de nova conta a serem validadas.</param>
+        /// <param name="model">Modelo de Pré-Registro a ser validado (ex: Nome, Email, Senha).</param>
         /// <returns>Redireciona o usuário para página de confirmação de código se as informações forem válidas.</returns>
         [HttpPost]
         public async Task<IActionResult> Register([FromForm] RegisterViewModel model)
@@ -39,11 +48,10 @@ namespace Portifolio.Controllers
                 model.Password = string.Empty;
                 TempData[RegisterModelKey] = JsonSerializer.Serialize(model);
                 TempData[ErrorMessageKey] = InvalidDataMessage;
-
                 return RedirectToAction("Register", "Login");
             }
 
-            var result = await _registerService.PreRegisterAsync(model);
+            var result = await _registerService.GenerateCodeAndSentEmailAsync(model);
 
             if (!result.IsSuccess)
             {
@@ -51,20 +59,17 @@ namespace Portifolio.Controllers
                 model.ConfirmPassword = string.Empty;
                 TempData[RegisterModelKey] = JsonSerializer.Serialize(model);
                 TempData[ErrorMessageKey] = result.ErrorMessage;
-
                 return RedirectToAction("Register", "Login");
             }
 
             TempData[RegisterModelKey] = model.Email;
             TempData[AllowAccessConfirmationKey] = true;
-
             return RedirectToAction(nameof(ConfirmCode));
         }
 
         /// <summary>
-        /// Rota GET para confirmação de código.
+        /// Rota get protegida com Token de permissão de acesso.
         /// </summary>
-        /// <returns>Renderiza a página para verificação do código.</returns>
         [HttpGet]
         public IActionResult ConfirmCode()
         {
@@ -99,18 +104,16 @@ namespace Portifolio.Controllers
                 TempData.Keep(RegisterModelKey);
                 TempData[AllowAccessConfirmationKey] = true;
                 TempData[ErrorMessageKey] = "Por favor, digite o código de confirmação.";
-
                 return RedirectToAction(nameof(ConfirmCode));
             }
 
-            var result = await _confirmationCodeService.VerifyCodeAsync(emailString, code);
+            var result = await _confirmationCodeService.VerifyCodeAndCreateUserAccountAsync(emailString, code);
 
             if (!result.IsSuccess)
             {
                 TempData.Keep(RegisterModelKey);
                 TempData[AllowAccessConfirmationKey] = true;
                 TempData[ErrorMessageKey] = result.ErrorMessage;
-
                 return RedirectToAction(nameof(ConfirmCode));
             }
 
