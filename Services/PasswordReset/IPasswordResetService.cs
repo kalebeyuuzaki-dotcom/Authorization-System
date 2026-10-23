@@ -1,7 +1,7 @@
 using Portifolio.Models.Result;
 using Portifolio.Models.ViewModels;
 
-namespace Portifolio.Services.PasswordResetService
+namespace Portifolio.Services.PasswordReset
 {
     public interface IPasswordResetService
     {

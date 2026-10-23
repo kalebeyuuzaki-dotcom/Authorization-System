@@ -4,7 +4,7 @@ using Portifolio.Models.Domain;
 using Portifolio.Models.Result;
 using Portifolio.Models.ViewModels;
 
-namespace Portifolio.Services.PasswordResetService
+namespace Portifolio.Services.PasswordReset
 {
     public class PasswordResetService : IPasswordResetService
     {
