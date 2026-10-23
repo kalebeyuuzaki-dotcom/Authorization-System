@@ -50,10 +50,8 @@ namespace Portifolio.Controllers
             if (!ModelState.IsValid)
             {
                 model.Password = string.Empty;
-                TempData[LoginModelKey] = JsonSerializer.Serialize(model);
-                TempData[ErrorMessageKey] = InvalidDataMessage;
-
-                return RedirectToAction(nameof(Index));
+                ViewBag.ErrorMessage = InvalidDataMessage;
+                return View(nameof(Index), model);
             }
 
             UserSessionViewModel? user = await _authService.AuthenticateAsync(model);
@@ -63,7 +61,6 @@ namespace Portifolio.Controllers
                 model.Password = string.Empty;
                 TempData[LoginModelKey] = JsonSerializer.Serialize(model);
                 TempData[ErrorMessageKey] = "E-mail e/ou senha incorretos.";
-
                 return RedirectToAction("Index", "Home");
             }
 
@@ -92,16 +89,6 @@ namespace Portifolio.Controllers
         [HttpGet]
         [Authorize]
         public IActionResult Panel()
-        {
-            return View();
-        }
-
-        /// <summary>
-        /// Rota GET que carrega a página para criar nova conta.
-        /// </summary>
-        [AllowAnonymous]
-        [HttpGet]
-        public IActionResult Register()
         {
             return View();
         }
