@@ -28,8 +28,8 @@ namespace Portifolio.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
+                    b.Property<byte>("AccessFailedCount")
+                        .HasColumnType("tinyint");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -68,8 +68,8 @@ namespace Portifolio.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
+                    b.Property<byte>("AccessFailedCount")
+                        .HasColumnType("tinyint");
 
                     b.Property<string>("Email")
                         .IsRequired()
