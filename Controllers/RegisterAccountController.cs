@@ -8,24 +8,38 @@ namespace Portifolio.Controllers
     /// <summary>
     /// Coordena o fluxo de cadastro de novas contas.
     /// </summary>
-    public class RegisterController : Controller
+    public class RegisterAccountController : Controller
     {
         private const string RegisterModelKey = "RegisterModel";
         private const string ErrorMessageKey = "ErrorMessage";
         private const string AllowAccessConfirmationKey = "AllowAccessConfirmation";
+        private const string InvalidDataMessage = "Os dados informados estão em um formato inválido. Por favor, verifique as informações.";
+        private const string SuccessMessage = "Sua conta foi criada e ativada com sucesso! Faça seu login.";
+        private const string SessionExpiredMessage = "Sua sessão expirou. Por favor, reinicie o processo de cadastro.";
+        private const string GenericErrorMessage = "Por favor, digite o código de confirmação.";
+
         private readonly IRegisterService _registerService;
         private readonly IConfirmationCodeService _confirmationCodeService;
 
-        public RegisterController(IRegisterService registerService, IConfirmationCodeService confirmationCodeService)
+        public RegisterAccountController(IRegisterService registerService, IConfirmationCodeService confirmationCodeService)
         {
             _registerService = registerService;
             _confirmationCodeService = confirmationCodeService;
+        }
+        
+        /// <summary>
+        /// Rota GET que carrega a página para criar nova conta.
+        /// </summary>
+        [HttpGet]
+        public IActionResult Register()
+        {
+            return View();
         }
 
         /// <summary>
         /// Rota POST que valida as informações de pré-registro de novas contas.
         /// </summary>
-        /// <param name="model">Informações de nova conta a serem validadas.</param>
+        /// <param name="model">Modelo de Pré-Registro a ser validado (ex: Nome, Email, Senha).</param>
         /// <returns>Redireciona o usuário para página de confirmação de código se as informações forem válidas.</returns>
         [HttpPost]
         public async Task<IActionResult> Register([FromForm] RegisterViewModel model)
@@ -33,46 +47,40 @@ namespace Portifolio.Controllers
             if (!ModelState.IsValid)
             {
                 model.Password = string.Empty;
-                TempData[RegisterModelKey] = JsonSerializer.Serialize(model);
-                TempData[ErrorMessageKey] = "Os dados informados estão em um formato inválido. Por favor, verifique as informações.";
-
-                return RedirectToAction("Register", "Login");
+                TempData[ErrorMessageKey] = InvalidDataMessage;
+                return RedirectToAction(nameof(Register), model);
             }
 
-            var result = await _registerService.PreRegisterAsync(model);
+            var result = await _registerService.GenerateCodeAndSentEmailAsync(model);
 
             if (!result.IsSuccess)
             {
                 model.Password = string.Empty;
                 model.ConfirmPassword = string.Empty;
-                TempData[RegisterModelKey] = JsonSerializer.Serialize(model);
                 TempData[ErrorMessageKey] = result.ErrorMessage;
-
-                return RedirectToAction("Register", "Login");
+                return RedirectToAction(nameof(Register), model);
             }
 
-            TempData[RegisterModelKey] = model.Email;
+            TempData[RegisterModelKey] = model.Email.ToLower();
             TempData[AllowAccessConfirmationKey] = true;
-
             return RedirectToAction(nameof(ConfirmCode));
         }
 
         /// <summary>
-        /// Rota GET para confirmação de código.
+        /// Rota get protegida com Token de permissão de acesso.
         /// </summary>
-        /// <returns>Renderiza a página para verificação do código.</returns>
         [HttpGet]
         public IActionResult ConfirmCode()
         {
-            /* Verifica se quem está acessando esse endpoint foi redirecionado pela action Register, 
-            impedindo acesso direto a essa URL (/Register/ConfirmCode). */
-            if (TempData[RegisterModelKey] == null || TempData[AllowAccessConfirmationKey] == null)
+            var email = TempData.Peek(RegisterModelKey)?.ToString(); // RECEBEMOS O TEMPDATA E USAMOS O PEEK PARA SOBREVIVER AO PROX POST
+            var tokenAcess = TempData.Peek(AllowAccessConfirmationKey)?.ToString();
+
+            if (email is null || tokenAcess is null)
             {
-                return RedirectToAction("Register", "Login");
+                return RedirectToAction("Index", "Home");
             }
 
-            TempData.Keep(RegisterModelKey);
-
+            ViewBag.Email = email;
             return View();
         }
 
@@ -83,39 +91,33 @@ namespace Portifolio.Controllers
         /// <returns>Redireciona para a página inicial/login em caso de sucesso, ou recarrega a página de 
         /// confirmação exibindo o erro correspondente.</returns>
         [HttpPost]
-        public async Task<IActionResult> VerifyCodeAsync(string code)
+        public async Task<IActionResult> VerifyCode(string code)
         {
-            string emailString = TempData[RegisterModelKey]?.ToString() ?? string.Empty;
+            var email = TempData.Peek(RegisterModelKey)?.ToString() ?? string.Empty;
 
-            if (string.IsNullOrWhiteSpace(emailString))
+            if (string.IsNullOrWhiteSpace(email))
             {
-                TempData[ErrorMessageKey] = "Sua sessão expirou. Por favor, reinicie o processo de cadastro.";
-
-                return RedirectToAction("Register", "Login");
+                TempData[ErrorMessageKey] = SessionExpiredMessage;
+                return RedirectToAction("Index", "Home");
             }
 
             if (string.IsNullOrWhiteSpace(code))
             {
-                TempData.Keep(RegisterModelKey);
                 TempData[AllowAccessConfirmationKey] = true;
-                TempData[ErrorMessageKey] = "Por favor, digite o código de confirmação.";
-
+                TempData[ErrorMessageKey] = GenericErrorMessage;
                 return RedirectToAction(nameof(ConfirmCode));
             }
 
-            var result = await _confirmationCodeService.VerifyCodeAsync(emailString, code);
+            var result = await _confirmationCodeService.VerifyCodeAndCreateUserAccountAsync(email, code);
 
             if (!result.IsSuccess)
             {
-                TempData.Keep(RegisterModelKey);
                 TempData[AllowAccessConfirmationKey] = true;
                 TempData[ErrorMessageKey] = result.ErrorMessage;
-
                 return RedirectToAction(nameof(ConfirmCode));
             }
 
-            TempData["SuccessMessage"] = "Sua conta foi criada e ativada com sucesso! Faça seu login.";
-
+            TempData["SuccessMessage"] = SuccessMessage;
             return RedirectToAction("Index", "Home");
         }
     }

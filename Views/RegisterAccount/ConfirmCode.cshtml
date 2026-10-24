@@ -4,10 +4,8 @@
 @{
     TempData["Title"] = "Verificar Código";
     
-    string emailString = TempData["RegisterModel"]?.ToString() ?? "";
-    TempData.Keep("RegisterModel");
-
-    string maskedEmail = EmailHelper.MaskEmail(emailString);
+    dynamic email = ViewBag.Email;
+    string maskedEmail = EmailHelper.MaskEmail(email);
 }
 
 <div class="m-auto text-start bg-white p-5 shadow rounded-3 border border-light-subtle" style="max-width: 500px; mt-5;">
@@ -26,36 +24,28 @@
         Digitou as informações? Agora insira o código de confirmação de 6 dígitos enviado para o seu e-mail.
     </p>
 
-    <form asp-controller="Register" asp-action="VerifyCode" method="post">
-
-        <!-- Campo Código de Confirmação -->
+    <form asp-controller="RegisterAccount" asp-action="VerifyCode" method="post">
         <div class="mb-4">
             <label class="form-label text-secondary small fw-medium mb-2">
-                @* 3. EXIBE A VARIÁVEL MASCARADA AQUI *@
                 Insira o Código de Verificação enviado para o email <span class="text-dark fw-semibold">@maskedEmail</span>
             </label>
             <input name="code" class="form-control text-center fs-4 border-0 border-bottom border-secondary-subtle rounded-0 bg-transparent shadow-none px-0 py-2 text-dark" 
                    placeholder="000000" maxlength="6" pattern="\d{6}" inputmode="numeric" required />
         </div>
-
         <div class="mb-5 small">
             <p class="mb-0 text-muted">
-                Não recebeu o código? <a href="/Login/Register" class="text-decoration-none text-primary fw-medium">Voltar para o Cadastro</a>
+                Não recebeu o código? <a href="/RegisterAccount/Register" class="text-decoration-none text-primary fw-medium">Voltar para o Cadastro</a>
             </p>
         </div>
-
-        <!-- Ações do Formulário alinhadas à direita -->
         <div class="d-flex justify-content-end gap-2">
-            <a href="/Login/Register" class="btn btn-light border-0 text-secondary px-4 py-2 small" style="min-width: 100px;">
+            <a href="/Login/Index" class="btn btn-light border-0 text-secondary px-4 py-2 small" style="min-width: 100px;">
                 Cancelar
             </a>
             <button class="btn btn-primary px-4 py-2 small" type="submit" style="min-width: 150px;">
                 Verificar Código
             </button>
         </div>
-
     </form>
-
 </div>
 
 @section Scripts {

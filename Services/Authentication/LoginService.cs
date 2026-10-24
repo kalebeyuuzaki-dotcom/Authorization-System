@@ -16,6 +16,7 @@ namespace Portifolio.Services.Authentication
         public async Task<UserSessionViewModel?> AuthenticateAsync(LoginViewModel model)
         {
             var user = await _context.Users
+                .AsNoTracking()
                 .FirstOrDefaultAsync(u => u.Email == model.Email);
 
             if (user == null || !BCrypt.Net.BCrypt.Verify(model.Password, user.Password))

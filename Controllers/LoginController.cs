@@ -16,6 +16,8 @@ namespace Portifolio.Controllers
     {
         private const string ErrorMessageKey = "ErrorMessage";
         private const string LoginModelKey = "LoginModel";
+        private const string InvalidDataMessage = "Dados informados em formato inválido. Por favor, verifique as informações.";
+
         private readonly ILoginService _authService;
 
         public LoginController(ILoginService authService)
@@ -48,10 +50,8 @@ namespace Portifolio.Controllers
             if (!ModelState.IsValid)
             {
                 model.Password = string.Empty;
-                TempData[LoginModelKey] = JsonSerializer.Serialize(model);
-                TempData[ErrorMessageKey] = "Dados informados em formato inválido. Por favor, verifique as informações.";
-
-                return RedirectToAction(nameof(Index));
+                ViewBag.ErrorMessage = InvalidDataMessage;
+                return View(nameof(Index), model);
             }
 
             UserSessionViewModel? user = await _authService.AuthenticateAsync(model);
@@ -61,7 +61,6 @@ namespace Portifolio.Controllers
                 model.Password = string.Empty;
                 TempData[LoginModelKey] = JsonSerializer.Serialize(model);
                 TempData[ErrorMessageKey] = "E-mail e/ou senha incorretos.";
-
                 return RedirectToAction("Index", "Home");
             }
 
@@ -89,14 +88,10 @@ namespace Portifolio.Controllers
         /// </summary>
         [HttpGet]
         [Authorize]
-        public IActionResult Panel() => View();
-
-        /// <summary>
-        /// Rota GET que carrega a página para criar nova conta.
-        /// </summary>
-        [AllowAnonymous]
-        [HttpGet]
-        public IActionResult Register() => View();
+        public IActionResult Panel()
+        {
+            return View();
+        }
 
         /// <summary>
         /// Realiza o encerramento da sessão atual do usuário limpando os cookies.

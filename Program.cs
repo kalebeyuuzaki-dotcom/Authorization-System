@@ -6,6 +6,8 @@ using Portifolio.Configurations;
 using Portifolio.Services.Email;
 using Portifolio.Services.Register;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Portifolio.Services.PasswordRecovery;
+using Portifolio.Services.PasswordReset;
 
 Env.Load();
 
@@ -38,6 +40,9 @@ builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddTransient<IEmailService, EmailService>();
 builder.Services.AddScoped<IRegisterService, RegisterService>();
 builder.Services.AddScoped<IConfirmationCodeService, ConfirmationCodeService>();
+builder.Services.AddScoped<IRecoverPassword, RecoverPassword>();
+builder.Services.AddScoped<IConfirmCodePasswordRecoverService, ConfirmCodePasswordRecoverService>();
+builder.Services.AddScoped<IPasswordResetService, PasswordResetService>();
 
 builder.Services.Configure<SmtpSettings>(options =>
 {
