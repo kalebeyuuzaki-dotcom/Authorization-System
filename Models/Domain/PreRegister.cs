@@ -30,7 +30,7 @@ namespace Portifolio.Models.Domain
         [Required]
         public DateTime ExpiresAt { get; set; }
 
-        public int AccessFailedCount { get; set; } = 0;
+        public byte AccessFailedCount { get; set; } = 0;
 
         public bool IsVerified { get; set; } = false;
     }
