@@ -44,16 +44,8 @@ builder.Services.AddScoped<IRecoverPassword, RecoverPassword>();
 builder.Services.AddScoped<IConfirmCodePasswordRecoverService, ConfirmCodePasswordRecoverService>();
 builder.Services.AddScoped<IPasswordResetService, PasswordResetService>();
 
-builder.Services.Configure<SmtpSettings>(options =>
-{
-    options.Host = Environment.GetEnvironmentVariable("SMTP_HOST") ?? "";
-    options.Port = int.TryParse(Environment.GetEnvironmentVariable("SMTP_PORT"), out var port) ? port : 587;
-    options.Username = Environment.GetEnvironmentVariable("SMTP_USERNAME") ?? "";
-    options.Password = Environment.GetEnvironmentVariable("SMTP_PASSWORD") ?? "";
-    options.Encryption = Environment.GetEnvironmentVariable("SMTP_ENCRYPTION") ?? "";
-    options.FromAddress = Environment.GetEnvironmentVariable("SMTP_FROM_ADDRESS") ?? "";
-    options.FromName = Environment.GetEnvironmentVariable("SMTP_FROM_NAME") ?? "";
-});
+/* E-mail service s*/
+builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
 
 // ---------------------------------------
 // App
