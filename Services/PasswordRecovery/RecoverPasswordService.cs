@@ -1,9 +1,11 @@
+using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Portifolio.Models.Data;
 using Portifolio.Models.Domain;
 using Portifolio.Models.Result;
 using Portifolio.Models.ViewModels;
 using Portifolio.Services.Email;
+using Portifolio.Services.Jobs;
 using Portifolio.Utils;
 using Portifolio.Utils.Templates;
 
@@ -13,16 +15,15 @@ namespace Portifolio.Services.PasswordRecovery
     {
         private const int CodeExpirationMinutes = 5;
         private const string SubjectEmail = "Seu Código de Recuperação de Senha";
-        private const string FailSentEmail = "Não foi possível enviar o código de verificação agora. Por favor, tente novamente em alguns instantes.";
         private const string FailOperationSQL = "Ocorreu um erro interno ao processar a recuperação da sua senha. Tente novamente.";
 
         private readonly AppDbContext _context;
-        private readonly IEmailService _emailService;
+        private readonly IBackgroundJobClient _backgroundJobClient;
 
-        public RecoverPassword(AppDbContext appDbContext, IEmailService emailService)
+        public RecoverPassword(AppDbContext appDbContext, IBackgroundJobClient backgroundJobClient)
         {
             _context = appDbContext;
-            _emailService = emailService;
+            _backgroundJobClient = backgroundJobClient;
         }
 
         public async Task<PreRegisterResult> GenerateCodeAndSendEmailAsync(EmailViewModel model)
@@ -34,55 +35,25 @@ namespace Portifolio.Services.PasswordRecovery
                 return PreRegisterResult.Success();
             }
 
-            var request = CreateRecoverPasswordRequest(normalizedEmail);
+            var verificationCode = GenerateCodeHelper.GenerateConfirmationCode();
 
             var emailBody = EmailTemplates.BuildRecoverCodeEmail(
-                request.VerificationCode,
+                verificationCode,
                 CodeExpirationMinutes
             );
 
-            var emailSent = await _emailService.SendEmailAsync(
-                request.Email,
-                SubjectEmail,
-                emailBody
-            );
-
-            if (!emailSent)
+            try
             {
-                return PreRegisterResult.Failure(FailSentEmail);
-            }
+                _backgroundJobClient.Enqueue<IPasswordRecoveryJob>(job =>
+                    job.SendEmailAndSaveRequestAsync(normalizedEmail, SubjectEmail, emailBody, verificationCode));
 
-            if (!await TrySaveRecoverPasswordAsync(request))
+            }
+            catch
             {
                 return PreRegisterResult.Failure(FailOperationSQL);
             }
 
             return PreRegisterResult.Success();
-        }
-
-        public static RecoverPasswordRequest CreateRecoverPasswordRequest(string email)
-        {
-            return new RecoverPasswordRequest
-            {
-                Email = email,
-                VerificationCode = GenerateCodeHelper.GenerateConfirmationCode(),
-                ExpiresAt = DateTime.UtcNow.AddMinutes(CodeExpirationMinutes),
-                AccessFailedCount = 0,
-            };
-        }
-
-        private async Task<bool> TrySaveRecoverPasswordAsync(RecoverPasswordRequest recoverPasswordRequest)
-        {
-            try
-            {
-                await _context.RecoverPasswordRequests.AddAsync(recoverPasswordRequest);
-                await _context.SaveChangesAsync();
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
         }
     }
 }
