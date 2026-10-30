@@ -8,12 +8,14 @@ using Portifolio.Services.Register;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Portifolio.Services.PasswordRecovery;
 using Portifolio.Services.PasswordReset;
+using Hangfire;
+using Portifolio.Services.Jobs;
 
 Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
-/* Cookies */
+// Cookies 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -23,7 +25,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 builder.Services.AddControllersWithViews();
 
-/* Connection Db */
+// Connection Db
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 if (string.IsNullOrEmpty(connectionString))
@@ -31,11 +33,11 @@ if (string.IsNullOrEmpty(connectionString))
     throw new InvalidOperationException("A string de conexão 'DefaultConnection' não foi encontrada.");
 }
 
-/* DbContext */
+// DbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-/* Services */
+// Services
 builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddTransient<IEmailService, EmailService>();
 builder.Services.AddScoped<IRegisterService, RegisterService>();
@@ -43,8 +45,20 @@ builder.Services.AddScoped<IConfirmationCodeService, ConfirmationCodeService>();
 builder.Services.AddScoped<IRecoverPassword, RecoverPassword>();
 builder.Services.AddScoped<IConfirmCodePasswordRecoverService, ConfirmCodePasswordRecoverService>();
 builder.Services.AddScoped<IPasswordResetService, PasswordResetService>();
+builder.Services.AddScoped<IPasswordRecoveryJob, PasswordRecoveryJob>();
+builder.Services.AddScoped<IRegisterAccountJob, RegisterAccountJob>();
 
-/* E-mail service s*/
+// Configure Hangfire
+builder.Services.AddHangfire(config => config
+    .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+    .UseSimpleAssemblyNameTypeSerializer()
+    .UseRecommendedSerializerSettings()
+    .UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Server Hangfire
+builder.Services.AddHangfireServer();
+
+// E-mail service
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
 
 // ---------------------------------------
@@ -60,7 +74,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-/* Migrations auto */
+// Migrations auto
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
