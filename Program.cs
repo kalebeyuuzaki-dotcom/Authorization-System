@@ -46,6 +46,7 @@ builder.Services.AddScoped<IRecoverPassword, RecoverPassword>();
 builder.Services.AddScoped<IConfirmCodePasswordRecoverService, ConfirmCodePasswordRecoverService>();
 builder.Services.AddScoped<IPasswordResetService, PasswordResetService>();
 builder.Services.AddScoped<IPasswordRecoveryJob, PasswordRecoveryJob>();
+builder.Services.AddScoped<IRegisterAccountJob, RegisterAccountJob>();
 
 // Configure Hangfire
 builder.Services.AddHangfire(config => config
