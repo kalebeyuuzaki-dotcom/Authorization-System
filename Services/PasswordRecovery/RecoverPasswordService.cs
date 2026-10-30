@@ -43,8 +43,13 @@ namespace Portifolio.Services.PasswordRecovery
             try
             {
                 _backgroundJobClient.Enqueue<IPasswordRecoveryJob>(job =>
-                    job.SendEmailAndSaveRequestAsync(normalizedEmail, SubjectEmail, emailBody, verificationCode));
-
+                    job.SendEmailAndSaveRequestAsync(
+                        normalizedEmail, 
+                        SubjectEmail, 
+                        emailBody, 
+                        verificationCode
+                    )
+                );
             }
             catch
             {
