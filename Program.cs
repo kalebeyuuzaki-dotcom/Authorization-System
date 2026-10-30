@@ -47,7 +47,6 @@ builder.Services.AddScoped<IConfirmCodePasswordRecoverService, ConfirmCodePasswo
 builder.Services.AddScoped<IPasswordResetService, PasswordResetService>();
 builder.Services.AddScoped<IPasswordRecoveryJob, PasswordRecoveryJob>();
 
-
 // Configure Hangfire
 builder.Services.AddHangfire(config => config
     .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)

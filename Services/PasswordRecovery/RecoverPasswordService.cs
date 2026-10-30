@@ -1,10 +1,8 @@
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Portifolio.Models.Data;
-using Portifolio.Models.Domain;
 using Portifolio.Models.Result;
 using Portifolio.Models.ViewModels;
-using Portifolio.Services.Email;
 using Portifolio.Services.Jobs;
 using Portifolio.Utils;
 using Portifolio.Utils.Templates;
