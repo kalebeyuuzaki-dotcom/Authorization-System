@@ -1,14 +1,147 @@
-<!DOCTYPE html>
+@{
+    ViewData["Title"] = "Painel do Projeto";
+}
 
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
+<div class="container my-5">
+    <!-- Alerta de Sucesso no Login -->
+    <div class="border-0 border-start border-4 border-success ps-3 mb-5 small text-start text-dark bg-white p-3 shadow-sm rounded-end"
+         role="alert">
+        <span class="fw-semibold text-success d-block mb-1">🔓 Autenticação Concluída!</span>
+        Você acessou a área protegida do sistema com sucesso.
+    </div>
 
-    <p>ENTROU</p>
-    
-</body>
-</html>
+    <!-- Card Principal de Apresentação -->
+    <div class="bg-white p-5 shadow rounded-3 border border-light-subtle m-auto text-start" style="max-width: 850px;">
+        
+        <div class="d-flex align-items-center gap-3 mb-4 border-bottom pb-3">
+            <span class="fs-1">🔒</span>
+            <div>
+                <h1 class="fs-3 fw-bold text-dark mb-1">Sistema de Autenticação Seguro</h1>
+                <p class="text-secondary small mb-0">ASP.NET Core MVC (.NET 10) | Portfólio Técnico</p>
+            </div>
+        </div>
+
+        <p class="text-secondary leading-relaxed mb-4">
+            Olá, recrutador! Este projeto foi desenvolvido para aplicar de forma prática os conceitos de
+            <strong>Segurança da Informação (SI)</strong> e <strong>Defesa Cibernética</strong> estudados na faculdade
+            de Análise e Desenvolvimento de Sistemas (ADS). O objetivo principal é erguer um ecossistema de autenticação
+            resiliente a falhas e protegido contra os vetores de ataque mais comuns do mercado.
+        </p>
+
+        <!-- Seção: Progresso e Requisitos -->
+        <h2 class="fs-5 fw-bold text-dark mt-5 mb-3">🚀 Etapas de Desenvolvimento do Sistema</h2>
+        <div class="row g-2 mb-4">
+            <div class="col-md-6">
+                <div class="p-2 border rounded bg-light-subtle small text-muted"><span
+                    class="text-success fw-bold">✓</span> Hashing (BCrypt) para senhas</div>
+                </div>
+                <div class="col-md-6">
+                    <div class="p-2 border rounded bg-light-subtle small text-muted"><span
+                        class="text-success fw-bold">✓</span> Credenciais confidenciais com .env</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-2 border rounded bg-light-subtle small text-muted"><span
+                            class="text-success fw-bold">✓</span> Proteção contra User Enumeration</div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-2 border rounded bg-light-subtle small text-muted"><span
+                                class="text-success fw-bold">✓</span> Ativação de conta por E-mail</div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="p-2 border rounded bg-light border-dashed small text-muted">⏳ Logs de auditoria (Em breve)
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="p-2 border rounded bg-light border-dashed small text-muted">⏳ Controle de acesso [Authorize]
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="p-2 border rounded bg-light border-dashed small text-muted">⏳ Middlewares de Exceções
+                                    Globais</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="p-2 border rounded bg-light border-dashed small text-muted">⏳ Rate Limiting (Força Bruta)
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Seção: Conceitos Aplicados -->
+                            <h2 class="fs-5 fw-bold text-dark mt-5 mb-3">🛡️ Pilares de Segurança Implementados</h2>
+                            <div class="accordion accordion-flush border rounded-3 overflow-hidden" id="securityAccordion">
+            
+                                <div class="accordion-item">
+                                    <h3 class="accordion-header">
+                                        <button class="accordion-button collapsed fw-medium text-dark small" type="button"
+                                                data-bs-toggle="collapse" data-bs-target="#collapseOne">
+                                            🔑 Criptografia de Senhas (Hashing)
+                                        </button>
+                                    </h3>
+                                    <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#securityAccordion">
+                                        <div class="accordion-body text-secondary small bg-light-subtle">
+                                            Armazenamento no banco de dados utilizando criptografia forte com o algoritmo
+                                            <strong>BCrypt</strong>, garantindo que as credenciais reais nunca fiquem legíveis, mesmo em
+                                            caso de vazamento da base de dados.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="accordion-item">
+                                    <h3 class="accordion-header">
+                                        <button class="accordion-button collapsed fw-medium text-dark small" type="button"
+                                                data-bs-toggle="collapse" data-bs-target="#collapseTwo">
+                                            👁️ Confidencialidade (Proteção de Credenciais)
+                                        </button>
+                                    </h3>
+                                    <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#securityAccordion">
+                                        <div class="accordion-body text-secondary small bg-light-subtle">
+                                            Uso de variáveis de ambiente (<code>.env</code>) para isolar chaves secretas e credenciais do
+                                            servidor de e-mail (SMTP), garantindo que dados sensíveis nunca fiquem expostos no código-fonte
+                                            ou em repositórios públicos.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="accordion-item">
+                                    <h3 class="accordion-header">
+                                        <button class="accordion-button collapsed fw-medium text-dark small" type="button"
+                                                data-bs-toggle="collapse" data-bs-target="#collapseThree">
+                                            🚫 Proteção contra Enumeração de Usuários (User Enumeration)
+                                        </button>
+                                    </h3>
+                                    <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#securityAccordion">
+                                        <div class="accordion-body text-secondary small bg-light-subtle">
+                                            Se um usuário tentar cadastrar um e-mail existente, o sistema adota a técnica do <em>Sucesso
+                                            Falso</em>. Isso impede que atacantes descubram quais e-mails possuem conta ativa mapeando
+                                            mensagens de erro específicas na tela.
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- Seção: Clean Code -->
+                            <h2 class="fs-5 fw-bold text-dark mt-5 mb-3">📐 Arquitetura e Código Limpo</h2>
+                            <p class="text-secondary small bg-light p-3 rounded-3 border-start border-3 border-secondary mb-5">
+                                O fluxo de registro foi refatorado de métodos lineares para métodos privados estáticos e helpers isolados.
+                                Essa abordagem eliminou "Magic Numbers" através de constantes centralizadas e garantiu o <strong>Princípio
+                                da Responsabilidade Única (SRP)</strong> dentro da camada de serviço.
+                            </p>
+
+                            <!-- Botões de Ação Inferiores -->
+                            <div class="d-flex justify-content-between align-items-center pt-3 border-top mt-4">
+                                <a href="https://linkedin.com" target="_blank"
+                                   class="btn btn-outline-primary px-4 py-2 small d-inline-flex align-items-center gap-2">
+                                    <svg xmlns="http://w3.org" width="16" height="16" fill="currentColor" class="bi bi-linkedin"
+                                         viewBox="0 0 16 16">
+                                        <path
+                                        d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854zm4.943 12.248V6.169H2.542v7.225zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248S2.4 3.226 2.4 3.934c0 .694.521 1.248 1.327 1.248zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225z" />
+                                    </svg>
+                                    Ver meu LinkedIn
+                                </a>
+                                <a href="/Home/Index" class="btn btn-light border text-secondary px-4 py-2 small">
+                                    Sair do Painel
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
