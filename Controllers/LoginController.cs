@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Portifolio.Models.ViewModels;
 using Portifolio.Services.Authentication;
 
@@ -45,6 +46,7 @@ namespace Portifolio.Controllers
         /// <param name="model">Credenciais informadas pelo usuário (email e senha).</param>
         [AllowAnonymous]
         [HttpPost]
+        [EnableRateLimiting("BucketTokenPolicy")]
         public async Task<IActionResult> Authenticate([FromForm] LoginViewModel model)
         {
             if (!ModelState.IsValid)
