@@ -1,0 +1,39 @@
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Acesso Bloqueado Temporariamente";
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <div class="mb-4">
+                <svg xmlns="http://w3.org" width="80" height="80" fill="currentColor"
+                     class="text-danger bi bi-shield-slash" viewBox="0 0 16 16">
+                    <path
+                    d="M1.095 5.146a.5.5 0 0 1 .308-.58c1.15-.395 2.158-1.025 3.033-1.894a.5.5 0 0 1 .693 0c.731.722 1.542 1.258 2.41 1.606a.5.5 0 0 1-.334.942 9.4 9.4 0 0 0-1.863-1.181A12.4 12.4 0 0 1 2.5 4.887a.5.5 0 0 1-.58-.334zm12.358 5.608a.5.5 0 0 1 .168.647A7.4 7.4 0 0 1 8 14.5a7.4 7.4 0 0 1-5.621-2.599.5.5 0 1 1 .76-.648A6.4 6.4 0 0 0 8 13.5a6.4 6.4 0 0 0 4.803-2.146.5.5 0 0 1 .65-.6zM15 8a6.97 6.97 0 0 0-1.074-3.754.5.5 0 1 1 .84-.542A7.97 7.97 0 0 1 16 8a7.98 7.98 0 0 1-2.22 5.474.5.5 0 1 1-.76-.648A6.98 6.98 0 0 0 15 8zM8 1.493c1.785 1.18 3.522 1.764 5.221 1.764a.5.5 0 0 1 .492.42A7 7 0 0 1 14 5.5a.5.5 0 0 1-1 0 6 6 0 0 0-.25-1.71c-1.57-.14-3.18-.707-4.75-1.748L8 1.493zm-.5 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v3h1a.5.5 0 0 1 0 1h-3a.5.5 0 0 1 0-1h1v-3z" />
+                </svg>
+            </div>
+
+            <h1 class="display-5 text-dark fw-bold mb-3">Muitas requisições detectadas</h1>
+            
+            <p class="lead text-muted mb-4">
+                @(ViewData["ErrorMessage"] ?? "Por medidas de segurança e mitigação de ataques automatizados, o acesso deste IP foi suspenso temporariamente.")
+            </p>
+
+            <div class="alert alert-warning border-0 shadow-sm text-start mb-4" role="alert">
+                <h5 class="alert-heading fw-bold mb-2">🛡️ Nota do Sistema:</h5>
+                <p class="mb-0 small text-secondary">
+                    Nossos mecanismos de proteção ativos identificaram uma rajada anormal de tráfego.
+                    Seus dados de sessão e credenciais continuam protegidos. O limite será redefinido automaticamente em
+                    alguns minutos.
+                </p>
+            </div>
+
+            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary btn-lg px-4 gap-3">
+                    Voltar para o Início
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
