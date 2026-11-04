@@ -16,7 +16,6 @@ Para validar as defesas implementadas, tente simular os seguintes comportamentos
 
 * **Teste de Enumeração de Usuários:** Tente criar uma conta com um e-mail já existente. O sistema adotará a técnica do Sucesso Falso, avançando no fluxo lógico sem dar pistas textuais na tela se o e-mail possui ou não cadastro na base de dados.
 
----
 
 ## 🚀 Etapas de Desenvolvimento do Sistema
 
@@ -31,7 +30,6 @@ Acompanhamento do progresso de implementação dos requisitos de segurança do s
 - [x] Mecanismo de bloqueio contra ataques de força bruta (*Rate Limiting*).
 - [x] Proteção ativa a nível de aplicação contra DoS e DDoS.
 
----
 
 ## 🛡️ Conceitos de Segurança da Informação Aplicada
 
@@ -53,32 +51,25 @@ Para garantir a disponibilidade da aplicação contra abusos e ataques de Negaç
 * **Controle de Acesso (*Access Control*):** Implementação de defesa em profundidade para restringir o acesso a endpoints internos via ferramentas como Postman, garantindo que as rotas só fiquem acessíveis se o fluxo lógico anterior for concluído com sucesso.
 * **Confidencialidade das Credenciais:** Uso de variáveis de ambiente (`.env`) para isolar chaves secretas e credenciais do servidor de e-mail (SMTP), garantindo que dados sensíveis nunca fiquem expostos no código-fonte ou em repositórios públicos.
 
----
 
 ## 🎯 Por que eu desenvolvi este projeto?
 
 Este projeto foi desenvolvido para aplicar na prática os conceitos de **Segurança da Informação e Defesa Cibernética** com o desenvolvimento de **software seguro** e resiliente. Os esforços no desenvolvimento concentraram-se em mitigar ataques comuns e conhecidos, como *Brute Force*, *DoS* e *User Enumeration*, através da adoção de boas práticas relacionadas ao desenvolvimento de software.
 
----
 
 ## 🏛️ Por que escolhi a Arquitetura MVC?
 
 A escolha pelo padrão **MVC (Model-View-Controller)** foi baseada levando em consideração o escopo do projeto, possibilitando direcionar o foco na lógica do **Backend** aplicada aos fluxos principais de *login*, *registro de novas contas* e *recuperação de senhas*, e, posteriormente, facilitando o deploy por se tratar de uma aplicação monólitica.
 
----
 
 ## 📐 Padrões de Design e Clean Code aplicados
-Inicialmente, alguns fluxos da camada de serviços foram desenvolvidos em métodos **lineares** (inline) para validar a lógica de negócio de ponta a ponta. Posteriormente, foram aplicados conceitos de **Clean Code**, como **Prrincípio da Reponsabilidade Única/Segregação de Interface** e refatoração para extrair a lógica em métodos privados estáticos e helpers. Isso melhorou a legibilidade da orquestração principal, removeu 'Magic Numbers' usando constantes centralizadas e garantiu o Princípio da Responsabilidade Única dentro da classe de serviço.
-
---- 
+Inicialmente, alguns fluxos da camada de serviços foram desenvolvidos em métodos **lineares** (inline) para validar a lógica de negócio de ponta a ponta. Posteriormente, foram aplicados conceitos de **Clean Code**, como **Prrincípio da Reponsabilidade Única/Segregação de Interface** e refatoração para extrair a lógica em métodos privados estáticos e helpers. Isso melhorou a legibilidade da orquestração principal, removeu 'Magic Numbers' usando constantes centralizadas e garantiu o Princípio da Responsabilidade Única dentro da classe de serviço. 
 
 
 ## 📖 Documentação Completa
 
 Mais detalhes sobre a documentação desse projeto você pode acompanhar através do meu perfl profisional no linkedin.
 🔗 https://www.linkedin.com/in/hilton-camara-developer
-
----
 
 
 ## 🤝 Sugestões de Melhorias e Contato

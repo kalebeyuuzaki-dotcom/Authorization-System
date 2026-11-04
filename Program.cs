@@ -78,8 +78,8 @@ builder.Services.AddRateLimiter(options =>
         path.StartsWithSegments("/lib") ||
         path.StartsWithSegments("/css") ||
         path.StartsWithSegments("/js") ||
-        path.Value.EndsWith(".css") ||
-        path.Value.EndsWith(".js"))
+        path.Value?.EndsWith(".css") == true ||
+        path.Value?.EndsWith(".js") == true)
         {
             return RateLimitPartition.GetNoLimiter("BypassStaticAndErrorRoutes");
         }
