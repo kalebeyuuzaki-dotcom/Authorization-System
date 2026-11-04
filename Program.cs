@@ -10,6 +10,8 @@ using Portifolio.Services.PasswordRecovery;
 using Portifolio.Services.PasswordReset;
 using Hangfire;
 using Portifolio.Services.Jobs;
+using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.RateLimiting;
 
 Env.Load();
 
@@ -61,9 +63,48 @@ builder.Services.AddHangfireServer();
 // E-mail service
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
 
-// ---------------------------------------
-// App
-// ---------------------------------------
+// Rate limiting
+builder.Services.AddRateLimiter(options =>
+{
+
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
+    {
+        var path = httpContext.Request.Path;
+
+        if (path.StartsWithSegments("/Home/TooManyRequests") ||
+        path.StartsWithSegments("/Home/Error") ||
+        path.StartsWithSegments("/lib") ||
+        path.StartsWithSegments("/css") ||
+        path.StartsWithSegments("/js") ||
+        path.Value.EndsWith(".css") ||
+        path.Value.EndsWith(".js"))
+        {
+            return RateLimitPartition.GetNoLimiter("BypassStaticAndErrorRoutes");
+        }
+        var clientIp = httpContext.Connection.RemoteIpAddress?.ToString() ?? "anonimo";
+
+        return RateLimitPartition.GetSlidingWindowLimiter(
+            partitionKey: clientIp,
+            factory: _ => new SlidingWindowRateLimiterOptions
+            {
+                PermitLimit = 60,
+                Window = TimeSpan.FromMinutes(1),
+                SegmentsPerWindow = 4,
+                QueueLimit = 0
+            });
+    });
+
+    options.AddTokenBucketLimiter(policyName: "BucketTokenPolicy", opt =>
+    {
+        opt.TokenLimit = 5;
+        opt.ReplenishmentPeriod = TimeSpan.FromSeconds(12);
+        opt.TokensPerPeriod = 1;
+        opt.QueueLimit = 0;
+        opt.AutoReplenishment = true;
+    });
+});
 
 var app = builder.Build();
 
@@ -89,10 +130,10 @@ using (var scope = app.Services.CreateScope())
         throw new InvalidOperationException("Não foi possível realizar as Migrations para o SQL Server.");
     }
 }
-
 app.UseHttpsRedirection();
 app.UseRouting();
-
+app.UseStatusCodePagesWithReExecute("/Home/TooManyRequests");
+app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 
